@@ -1,0 +1,2061 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="theme-color" content="#b4005b" />
+    <title>MoH — Leadership</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+    <meta name="application-name" content="MoH" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* CSS Layout Engine & Design Tokens */
+      :root {
+        --bg: #0a0a0a;
+        --surface: #141414;
+        --surface2: #1f1f1f;
+        --border: #262626;
+        --text: #ffffff;
+        --sub: #a3a3a3;
+        --red: #cc0020;
+        --red-dim: rgba(204, 0, 32, 0.15);
+        --purple-dim: rgba(120, 80, 255, 0.15);
+        --purple: #a080ff;
+        --orange-dim: rgba(245, 158, 11, 0.15);
+        --orange: #f59e0b;
+        --green-dim: rgba(16, 185, 129, 0.15);
+        --green: #10b981;
+        --blue-dim: rgba(59, 130, 246, 0.15);
+        --blue: #3b82f6;
+        --display: "Bebas Neue", sans-serif;
+        --body: "Inter", sans-serif;
+        --nav-h: 64px;
+        --safe-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--body);
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 30px);
+      }
+      input,
+      select,
+      textarea,
+      button {
+        font-family: inherit;
+        color: inherit;
+      }
+
+      /* Core Layout Shell Components */
+      .app-header {
+        height: 64px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: var(--bg);
+        z-index: 100;
+      }
+      .app-header-left #viewKicker {
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--red);
+        letter-spacing: 0.05em;
+      }
+      .app-header-left #viewTitle {
+        font-family: var(--display);
+        font-size: 24px;
+        line-height: 1;
+      }
+      .app-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        font-size: 12px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .app-main {
+        padding-top: 84px;
+        padding-inline: 20px;
+        max-width: 768px;
+        margin: 0 auto;
+      }
+
+      /* Design System Layout Elements */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+        position: relative;
+      }
+      .card-red {
+        border-color: rgba(204, 0, 32, 0.32);
+        background: linear-gradient(
+          135deg,
+          rgba(204, 0, 32, 0.14),
+          rgba(28, 28, 28, 0.95)
+        );
+      }
+      .leader-band {
+        border: 1px solid rgba(120, 80, 255, 0.25);
+        background: rgba(120, 80, 255, 0.08);
+      }
+      .module-num {
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--sub);
+        margin-bottom: 6px;
+      }
+      .page-subtitle {
+        color: var(--sub);
+        font-size: 13px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        margin-top: -12px;
+      }
+      .section-title {
+        font-family: var(--body);
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--sub);
+        margin: 24px 0 12px;
+        border-left: 2px solid var(--red);
+        padding-left: 8px;
+      }
+
+      /* Input Form Components */
+      .field {
+        margin-bottom: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .field-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--sub);
+        letter-spacing: 0.05em;
+      }
+      .field-input {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        width: 100%;
+        color: #fff;
+      }
+      .field-input:focus {
+        border-color: var(--red);
+        outline: none;
+      }
+      textarea.field-input {
+        min-height: 70px;
+        resize: vertical;
+      }
+
+      .btn-full {
+        display: block;
+        width: 100%;
+        padding: 14px;
+        border-radius: 8px;
+        font-weight: 700;
+        border: none;
+        font-size: 14px;
+        text-align: center;
+        cursor: pointer;
+        margin-bottom: 10px;
+      }
+      .btn-primary {
+        background: var(--red);
+        color: white;
+      }
+      .btn-ghost {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: white;
+      }
+      .btn-small {
+        display: inline-block;
+        width: auto;
+        padding: 6px 12px;
+        font-size: 11px;
+        border-radius: 6px;
+        cursor: pointer;
+        border: none;
+        font-weight: 700;
+        margin-top: 4px;
+      }
+
+      /* Operational Status Badge Elements */
+      .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-right: 4px;
+        margin-bottom: 4px;
+      }
+      .bg-green {
+        background: var(--green-dim);
+        color: var(--green);
+      }
+      .bg-purple {
+        background: var(--purple-dim);
+        color: var(--purple);
+      }
+      .bg-red {
+        background: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+      }
+      .bg-grey {
+        background: var(--surface2);
+        color: var(--sub);
+      }
+
+      /* Reactive Grid Layouts */
+      .metrics-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+      .metrics-row.four {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .metrics-row.five {
+        grid-template-columns: repeat(5, 1fr);
+      }
+      .metric-tile {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px;
+        text-align: center;
+      }
+      .m-val {
+        font-family: var(--display);
+        font-size: 30px;
+        line-height: 1;
+        margin-bottom: 2px;
+        color: white;
+      }
+      .m-label {
+        font-size: 9px;
+        font-weight: 700;
+        color: var(--sub);
+        text-transform: uppercase;
+      }
+
+      /* Mobile Responsive Card Listings */
+      .data-card-item {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px;
+        margin-bottom: 10px;
+      }
+      .data-card-meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 11px;
+        color: var(--sub);
+        border-top: 1px solid var(--border);
+        padding-top: 8px;
+        margin-top: 8px;
+      }
+      .data-card-meta-span {
+        background: var(--surface2);
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+      .checkbox-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .checkbox-label {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        padding: 10px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 24px 12px;
+        color: var(--sub);
+      }
+      .empty-state-icon {
+        font-size: 24px;
+        color: rgba(255, 255, 255, 0.1);
+        margin-bottom: 4px;
+        display: block;
+      }
+      .empty-state-text {
+        font-size: 12px;
+        line-height: 1.4;
+      }
+
+      /* Core Navigation Rules */
+      .bottom-nav {
+        height: calc(var(--nav-h) + var(--safe-bottom));
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        padding-bottom: var(--safe-bottom);
+      }
+      .bottom-nav .nav-item {
+        flex: 1;
+        background: none;
+        border: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        color: var(--sub);
+        font-size: 9px;
+        font-weight: 600;
+        height: 100%;
+        cursor: pointer;
+        position: relative;
+        text-decoration: none;
+      }
+      .bottom-nav .nav-item.active {
+        color: white;
+      }
+      .bottom-nav .nav-icon {
+        font-size: 18px;
+        line-height: 1;
+      }
+      .nav-dot {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--red);
+        position: absolute;
+        bottom: 6px;
+        display: none;
+      }
+      .bottom-nav .nav-item.active .nav-dot {
+        display: block;
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
+    <link rel="stylesheet" href="theme-overrides.css" />
+    <link rel="stylesheet" href="responsive-app.css" />
+    <link rel="stylesheet" href="app-ui.css" />
+
+      <script src="pwa.js" defer></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <button
+        id="navToggle"
+        class="nav-toggle"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="sideNav"
+      >
+        <span></span><span></span><span></span>
+      </button>
+      <div class="app-header-left">
+        <p id="viewKicker">MOH Command View</p>
+        <h1 id="viewTitle">Leadership Console</h1>
+      </div>
+      <a href="index.html#profile" class="app-avatar" id="headerInitialsSlot" aria-label="Profile">M</a>
+    </header>
+
+    <main class="app-main">
+      <div id="leadershipHeaderContainer"></div>
+      <div id="roleViewCanvas"></div>
+    </main>
+
+    <div id="navScrim" class="nav-scrim"></div>
+    <aside id="sideNav" class="side-nav" aria-label="Main navigation">
+      <div class="side-nav-head">
+        <img
+          src="assets/images/crc-logo.jpg"
+          alt="CRC"
+          class="sn-logo"
+          onerror="this.style.display='none'"
+        />
+        <div class="sn-meta">
+          <div class="sn-title">CRC MOH OS</div>
+          <div class="sn-sub">Command Console</div>
+        </div>
+      </div>
+      <a class="side-nav-user" href="index.html#profile" style="text-decoration:none;">
+        <div class="snu-av" id="snuAvatar">M</div>
+        <div style="min-width:0;">
+          <div class="snu-name" id="snuName">Leader</div>
+          <div class="snu-role" id="snuRole">Leadership</div>
+        </div>
+      </a>
+      <div class="side-nav-scroll">
+        <nav id="bottomNav" class="side-nav-list"></nav>
+      </div>
+      <div class="side-nav-foot">
+        <a class="btn-full btn-ghost" href="index.html" style="display:block;text-align:center;text-decoration:none;">Back to App</a>
+        <div class="sn-version">CRC MOH OS · v11</div>
+      </div>
+    </aside>
+
+    <script src="data.js"></script>
+    <script src="moh-data.js"></script>
+    <script src="bridge.js"></script>
+
+    <!-- Supabase client. leadership.html previously had none, which is why
+         every console was reading localStorage. -->
+    <script type="module">
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+      const SUPABASE_URL = "https://xxvsimovsdqejqqpmgiv.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4dnNpbW92c2RxZWpxcXBtZ2l2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2OTEzODgsImV4cCI6MjA5ODI2NzM4OH0.J6WCHIWlHiB5qsip8ZnuJt5c_U0JtL30qQrESwszke8";
+      window.supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      window.dispatchEvent(new Event("supabase-ready"));
+    </script>
+
+    <!-- ================= LOGICAL APPLICATION SCRIPT ENGINE ================= -->
+    <script>
+      // 13. MASTER SEED DATA ARRAYS
+      const MASTER_AREA_DUTIES = {
+        usher: {
+          Alpha: [
+            "Altar Control",
+            "Stage Checks",
+            "Chair Realignment",
+            "Offering Basket Preparation",
+            "Offering Basket Support",
+            "Front Row Awareness",
+            "Leadership Row Support",
+            "Altar Call Support",
+            "Movement Control Near Stage",
+            "Balcony Check",
+          ],
+          Bravo: [
+            "Foyer Flow",
+            "Bathroom Checks",
+            "Entrance Control",
+            "Balcony Check",
+            "Passageway Support",
+            "Door Support",
+            "Member Direction",
+            "Queue Flow",
+          ],
+          Charlie: [
+            "Welcome Support",
+            "Chapel Support",
+            "Tent Pathway Support",
+            "Outside D3 Support",
+            "Stair Support",
+            "Exterior Flow",
+            "Member Direction",
+            "Entrance Greeting",
+          ],
+          Delta: [
+            "Parking Control",
+            "Road Control",
+            "Vehicle Guidance",
+            "Overflow Parking",
+            "Staff Parking Support",
+            "Pastor Parking Support",
+            "Cone Setup",
+            "Banner Setup",
+            "Gate Support",
+            "Traffic Flow",
+          ],
+          Echo: [
+            "Main Gate Control",
+            "Bus Control",
+            "Pedestrian Crossing",
+            "Outside Paving Support",
+            "Road Paving Support",
+            "Staff Parking Road Support",
+            "Road Movement Support",
+            "AM Foxtrot Coverage",
+          ],
+          Foxtrot: [
+            "Top Parking Control",
+            "Drop-Off Management",
+            "PM Road Control",
+            "Charlie Road Support",
+            "Vehicle Movement",
+            "Crowd Flow",
+          ],
+        },
+        hostess: {
+          "Inside Group 1": [
+            "Stage Cleaning",
+            "Stage Rim Cleaning",
+            "Speaker Cleaning",
+            "Pulpit Cleaning",
+            "Backstage Cleaning",
+            "Back Corridor Cleaning",
+            "Storeroom Check",
+            "Clipboard Preparation",
+            "FTV Form Setup",
+            "Tithing Envelope Setup",
+          ],
+          "Inside Group 2": [
+            "Auditorium Cleaning",
+            "Chair Cleaning",
+            "Aisle Cleaning",
+            "Stair Cleaning",
+            "Rail Cleaning",
+            "Balcony Check",
+            "After-Service Rubbish Collection",
+            "Bottle Pickup",
+            "Wrapper Pickup",
+            "Tissue Pickup",
+          ],
+          "Inside Group 3": [
+            "Mother’s Room Cleaning",
+            "Parent Room Support",
+            "Toy Sanitising",
+            "Counter Cleaning",
+            "Window Cleaning",
+            "Balcony Cleaning",
+            "Bin Emptying",
+            "Smell Check",
+            "Parent Assistance",
+            "Door Help",
+            "Pram Help",
+          ],
+          "Outside Group 1": [
+            "Bathroom Cleaning",
+            "Bathroom Restocking",
+            "Mirror Cleaning",
+            "Counter Cleaning",
+            "Toilet Cleaning",
+            "Floor Mopping",
+            "Window Cleaning",
+            "Stair Cleaning",
+            "Rail Cleaning",
+            "Storeroom Restock",
+            "Supply Check",
+          ],
+          "Outside Group 2": [
+            "Tent Support",
+            "Tent Cleaning",
+            "Greeting",
+            "Outside Cleaning",
+            "Member Assistance",
+            "Rubbish Pickup",
+            "AM Tent Setup",
+            "AM Tent Reset",
+          ],
+          "Outside Group 3": [
+            "PM Tent Support",
+            "Kids Church Cleaning",
+            "Old Foyer Cleaning",
+            "Old Bathroom Cleaning",
+            "Greeting",
+            "Tent Cleaning",
+            "After-Service Set Down",
+            "Wash Lappies",
+            "Wash Mop Covers",
+            "Hang Items To Dry",
+          ],
+        },
+      };
+
+      const ROLE_LABELS = {
+        trainee: "Trainee Personnel",
+        volunteer: "Standard Volunteer",
+        group_leader: "Group Leader",
+        area_leader: "Area Leader",
+        service_leader: "Service Leader",
+        ministry_leader: "Ministry Leader",
+        pastor: "Ministry Pastor",
+      };
+
+      const CLEARANCE_LABELS = {
+        trainee: "T1 Clearance — Trainee",
+        volunteer: "T2 Clearance — Volunteer",
+        group_leader: "T3 Clearance — Group Leader",
+        area_leader: "T4 Clearance — Area Leader",
+        service_leader: "T5 Clearance — Service Leader",
+        ministry_leader: "T6 Clearance — Ministry Leader",
+        pastor: "T7 Clearance",
+      };
+
+      // Central Datastore Arrays
+      let currentUser = null;
+      let mohUsers = [];
+      let mohResponses = [];
+      let mohAssignments = [];
+      let mohFeedback = [];
+      let mohAlerts = [];
+      let mohDelegations = [];
+      let mohServingRequests = [];
+
+      // Initialize Page Context
+      document.addEventListener("DOMContentLoaded", function () {
+        currentUser = getCurrentUser();
+        if (!currentUser) {
+          window.location.href = "index.html";
+          return;
+        }
+
+        // 5. Check structural assignment parameters for Weekly Duty Captain delegation state override
+        resolveDatastores();
+
+        const role = currentUser.role;
+        const isAWeeklyDelegate = hasActiveWeeklyDelegation(currentUser.id);
+        const accessAuthorized = isLeader(currentUser) || isAWeeklyDelegate;
+
+        if (!accessAuthorized) {
+          document.getElementById("roleViewCanvas").innerHTML = `
+          <div class="card card-red" style="text-align:center; padding:40px 20px;">
+            <h2 style="font-family:var(--display); font-size:32px;">Access Denied</h2>
+            <p class="field-note" style="font-size:14px; margin-top:8px;">Leadership access only. Your profile does not permit this view.</p>
+          </div>`;
+          return;
+        }
+
+        // The leadership PIN was removed in v13 (shared plaintext PINs in a
+        // client-readable file). Roles + RLS replace it, so this gate is gone.
+        if (false) {
+          renderLeadershipPinGate(isAWeeklyDelegate);
+          return;
+        }
+
+        renderGlobalHeader(isAWeeklyDelegate);
+        renderDynamicMenu(isAWeeklyDelegate);
+        renderConsoleBody(isAWeeklyDelegate);
+
+        // Pull live data as soon as the Supabase client exists, re-render, and
+        // then keep re-rendering whenever anything relevant changes.
+        const goLive = async () => {
+          const ok = await loadLiveData();
+          if (!ok) return;
+          renderConsoleBody(isAWeeklyDelegate);
+          showDataBanner();
+
+          if (window.MOHData.onChange) {
+            window.MOHData.onChange(
+              [
+                "serving_stats",
+                "duty_assignment",
+                "user_info",
+                "feedback",
+                "group_area_assignment",
+                "group_placement",
+              ],
+              async () => {
+                await loadLiveData();
+                renderConsoleBody(isAWeeklyDelegate);
+                showDataBanner();
+              },
+            );
+          }
+        };
+
+        if (window.supabaseClient) goLive();
+        else window.addEventListener("supabase-ready", goLive, { once: true });
+      });
+
+      function showDataBanner() {
+        let el = document.getElementById("liveBanner");
+        if (!el) {
+          el = document.createElement("div");
+          el.id = "liveBanner";
+          const host = document.getElementById("leadershipHeaderContainer");
+          if (host) host.prepend(el);
+        }
+        const live = dataSource === "live";
+        el.className = "data-note" + (live ? " live" : "");
+        el.innerHTML = live
+          ? "\u25CF Live \u2014 updates as your team responds."
+          : "Showing cached data \u2014 couldn't reach the server.";
+        el.style.display = live ? "block" : "block";
+      }
+
+      // ================= 5. SHARED CORE STORAGE IMPLEMENTATION HELPER FUNCTIONS =================
+      function getCurrentUser() {
+        const read = (k) => {
+          try {
+            return JSON.parse(localStorage.getItem(k));
+          } catch {
+            return null;
+          }
+        };
+        // Current session (written by App.cacheSession since v13).
+        const phone = localStorage.getItem("moh_user_session");
+        const users = read("moh_users") || [];
+        if (phone) {
+          const me = users.find((u) => String(u.phone) === String(phone));
+          if (me) return me;
+        }
+        if (users.length === 1) return users[0];
+        // Legacy keys, kept so an old session still opens.
+        return (
+          read("currentUser") ||
+          read("crc_moh_current_user") ||
+          read("crc_moh_user") ||
+          read("crc_moh_user_v2") ||
+          null
+        );
+      }
+
+      // ================= LIVE DATA =================
+      // Was: parse six localStorage keys. localStorage is per-device, so every
+      // console only ever saw people who had signed in on this machine.
+      // Now: one call into MOHData, which reads Supabase and falls back to the
+      // local cache. The variable shapes are unchanged, so the five consoles
+      // below did not need rewriting.
+      let dataSource = "local";
+
+      // serving_stats uses am/pm/both/none; the consoles expect serving_*.
+      function mapServingToResponse(v) {
+        return (
+          {
+            am: "serving_am",
+            pm: "serving_pm",
+            both: "serving_both",
+            none: "not_serving",
+          }[v] || null
+        );
+      }
+
+      async function loadLiveData() {
+        if (!window.MOHData || !window.supabaseClient) return false;
+        try {
+          const view = await window.MOHData.teamOverview(currentUser);
+          const assigned = await window.MOHData.assignments(view.date);
+
+          mohUsers = view.members;
+          mohResponses = view.members
+            .filter((m) => m.serving)
+            .map((m) => ({
+              userId: m.id,
+              response: mapServingToResponse(m.serving),
+              requestId: "req_sunday",
+              date: view.date,
+            }));
+          mohAssignments = assigned.data;
+
+          const fb = await window.MOHData.feedback(currentUser);
+          mohFeedback = (fb.data || []).map((f) => ({
+            id: f.feedback_id,
+            userId: f.user_id,
+            title: f.title,
+            category: f.category,
+            location: f.location,
+            urgency: f.urgency_level,
+            description: f.description,
+            resolved: f.is_resolved,
+            createdAt: f.date_time_logged,
+          }));
+
+          mohServingRequests = [
+            { id: "req_sunday", title: "Sunday Service", date: view.date, status: "open" },
+          ];
+          mohAlerts = JSON.parse(localStorage.getItem("mohAlerts")) || [];
+          mohDelegations =
+            JSON.parse(localStorage.getItem("mohDelegations")) || [];
+
+          dataSource = view.source;
+          return true;
+        } catch (err) {
+          console.error("Live load failed, falling back to cache:", err);
+          return false;
+        }
+      }
+
+      function resolveDatastoresLocal() {
+        mohUsers =
+          JSON.parse(localStorage.getItem("mohUsers")) ||
+          JSON.parse(localStorage.getItem("crc_moh_users_v2")) ||
+          JSON.parse(localStorage.getItem("moh_users")) ||
+          [];
+        mohResponses =
+          JSON.parse(localStorage.getItem("mohResponses")) ||
+          JSON.parse(localStorage.getItem("crc_moh_responses_v2")) ||
+          [];
+        mohAssignments =
+          JSON.parse(localStorage.getItem("mohAssignments")) ||
+          JSON.parse(localStorage.getItem("crc_moh_assignments_v2")) ||
+          [];
+        mohFeedback =
+          JSON.parse(localStorage.getItem("mohFeedback")) ||
+          JSON.parse(localStorage.getItem("crc_moh_feedback_v2")) ||
+          [];
+        mohAlerts =
+          JSON.parse(localStorage.getItem("mohAlerts")) ||
+          JSON.parse(localStorage.getItem("crc_moh_alerts_v2")) ||
+          [];
+        mohDelegations =
+          JSON.parse(localStorage.getItem("mohDelegations")) || [];
+        mohServingRequests =
+          JSON.parse(localStorage.getItem("mohServingRequests")) ||
+          JSON.parse(localStorage.getItem("crc_moh_requests_v2")) ||
+          [];
+        dataSource = "local";
+      }
+
+      function resolveDatastores() {
+        resolveDatastoresLocal();
+
+        const uG = getUserGroup(currentUser);
+        const uS = getUserService(currentUser);
+        const uD = currentUser.division || "usher";
+
+        // 10. Direct injection of fallback data matching runtime boundaries exactly
+        if (mohUsers.length === 0) {
+          mohUsers = [
+            currentUser,
+            {
+              id: "u_m_1",
+              name: "Samuel",
+              surname: "M.",
+              groupId: uG,
+              division: uD,
+              primaryService: uS,
+              role: "volunteer",
+              birthday: "1995-06-22",
+            },
+            {
+              id: "u_m_2",
+              name: "Pearl",
+              surname: "K.",
+              groupId: uG,
+              division: uD,
+              primaryService: uS,
+              role: "volunteer",
+              birthday: "1998-11-04",
+            },
+            {
+              id: "u_m_3",
+              name: "Grace",
+              surname: "N.",
+              groupId: uG,
+              division: uD,
+              primaryService: uS,
+              role: "volunteer",
+            },
+            {
+              id: "u_m_4",
+              name: "Daniel",
+              surname: "Z.",
+              groupId: uG,
+              division: uD,
+              primaryService: uS,
+              role: "volunteer",
+            },
+            {
+              id: "u_m_5",
+              name: "Thabo",
+              surname: "M.",
+              groupId: "AMU1",
+              division: "usher",
+              primaryService: "AM",
+              role: "volunteer",
+            },
+            {
+              id: "u_trainee_1",
+              name: "Lerato",
+              surname: "S.",
+              groupId: "HAM1",
+              division: "hostess",
+              primaryService: "AM",
+              role: "trainee",
+              academy: { status: "certified" },
+            },
+          ];
+          localStorage.setItem("mohUsers", JSON.stringify(mohUsers));
+        }
+
+        if (mohResponses.length === 0) {
+          mohResponses = [
+            {
+              id: "r_1",
+              userId: "u_m_1",
+              response: "serving_am",
+              comment: "I can arrive early.",
+              createdAt: new Date().toISOString(),
+            },
+            {
+              id: "r_2",
+              userId: "u_m_2",
+              response: "not_serving",
+              reason: "Transport issue.",
+              createdAt: new Date().toISOString(),
+            },
+          ];
+          localStorage.setItem("mohResponses", JSON.stringify(mohResponses));
+        }
+      }
+
+      function isLeader(user) {
+        return [
+          "group_leader",
+          "area_leader",
+          "service_leader",
+          "ministry_leader",
+          "pastor",
+        ].includes(user.role);
+      }
+
+      function renderLeadershipPinGate(isAWeeklyDelegate) {
+        renderDynamicMenu(isAWeeklyDelegate);
+        const pins = { pastor:"7777", ministry_leader:"6666", service_leader:"5555", area_leader:"4444", group_leader:"3333" };
+        document.getElementById("leadershipHeaderContainer").innerHTML = `
+          <div class="card card-red">
+            <div class="module-num">Protected Leadership</div>
+            <h2 style="font-family:var(--display);font-size:34px;line-height:.9;">ENTER LEADERSHIP PIN</h2>
+            <p class="page-subtitle" style="margin-bottom:0;">${getRoleLabel(currentUser.role)} access requires confirmation.</p>
+          </div>`;
+        document.getElementById("roleViewCanvas").innerHTML = `
+          <div class="card">
+            <div class="field">
+              <label class="field-label">Leadership PIN</label>
+              <input id="leadershipPagePin" class="field-input" type="password" inputmode="numeric" placeholder="Enter PIN" autofocus />
+            </div>
+            <div id="leadershipPinError" class="error-box" style="display:none;">Incorrect PIN for this leadership role.</div>
+            <button id="unlockLeadershipBtn" class="btn-full btn-primary">Unlock Leadership</button>
+            <button class="btn-full btn-ghost" onclick="window.location.href='index.html#dashboard'">Back to Dashboard</button>
+          </div>`;
+        document.getElementById("unlockLeadershipBtn").onclick = () => {
+          const entered = (document.getElementById("leadershipPagePin").value || "").trim();
+          if (entered === pins[currentUser.role]) {
+            localStorage.setItem("moh_leadership_pin_ok", "true");
+            location.reload();
+          } else {
+            document.getElementById("leadershipPinError").style.display = "block";
+          }
+        };
+      }
+      function getRoleLabel(role) {
+        return ROLE_LABELS[role] || role;
+      }
+      function getUserGroup(user) {
+        return user.groupId || user.group || "Unassigned";
+      }
+      function getUserService(user) {
+        return user.primaryService || user.service || "AM";
+      }
+
+      function hasActiveWeeklyDelegation(userId) {
+        const today = new Date().toISOString().split("T")[0];
+        return mohDelegations.some(
+          (d) =>
+            d.delegatedToUserId === userId &&
+            d.type === "weekly_duty_delegate" &&
+            d.active &&
+            d.validUntil >= today,
+        );
+      }
+
+      function createAlert({ title, message, type, priority, userId }) {
+        const list = JSON.parse(localStorage.getItem("mohAlerts")) || [];
+        list.unshift({
+          id: crypto.randomUUID(),
+          title,
+          message,
+          type: type || "leadership",
+          priority: priority || "info",
+          userId: userId || currentUser.id,
+          read: false,
+          createdAt: new Date().toISOString(),
+        });
+        localStorage.setItem("mohAlerts", JSON.stringify(list));
+        localStorage.setItem("crc_moh_alerts_v2", JSON.stringify(list));
+      }
+
+      function saveGlobalArray(key, fallbackKey, array) {
+        localStorage.setItem(key, JSON.stringify(array));
+        if (fallbackKey)
+          localStorage.setItem(fallbackKey, JSON.stringify(array));
+      }
+
+      // ================= DYNAMIC RENDERING INTERFACE MODULES =================
+      function renderGlobalHeader(isDelegate) {
+        // BUG FIX: an empty surname used to render "MUNDEFINED" here.
+        const _n = String(currentUser.name || "").trim();
+        const _s = String(currentUser.surname || "").trim();
+        const _initials =
+          ((_n ? _n[0] : "") + (_s ? _s[0] : "") || "M").toUpperCase();
+
+        const _avatarEl = document.getElementById("headerInitialsSlot");
+        if (currentUser.profileImage)
+          _avatarEl.innerHTML = `<img src="${currentUser.profileImage}" alt="">`;
+        else _avatarEl.textContent = _initials;
+
+        const _snuAv = document.getElementById("snuAvatar");
+        const _snuName = document.getElementById("snuName");
+        const _snuRole = document.getElementById("snuRole");
+        if (_snuAv)
+          _snuAv.innerHTML = currentUser.profileImage
+            ? `<img src="${currentUser.profileImage}" alt="">`
+            : _initials;
+        if (_snuName)
+          _snuName.textContent = `${_n} ${_s}`.trim() || "Leader";
+        if (_snuRole)
+          _snuRole.textContent = `${getRoleLabel(currentUser.role)} \u00B7 ${currentUser.groupId || "All groups"}`;
+
+        const roleText = isDelegate
+          ? "Weekly Duty Delegate"
+          : getRoleLabel(currentUser.role);
+        const clearanceText = isDelegate
+          ? "Temporary Clearance Block"
+          : CLEARANCE_LABELS[currentUser.role] || "T1 Clearance";
+        const scopeText = getUserGroup(currentUser);
+
+        document.getElementById("leadershipHeaderContainer").innerHTML = `
+        <div class="card card-red">
+          <div class="module-num">MOH OS Command Console</div>
+          <h2 style="font-family: var(--display); font-size: 36px; line-height:0.9; margin-bottom:4px;">LEADERSHIP</h2>
+          <p class="page-subtitle" style="margin-bottom:12px;">Manage readiness, people, feedback, and service preparation.</p>
+          <div style="display:flex; flex-wrap:wrap; gap:6px;">
+            <span class="badge" style="background:var(--bg); border:1px solid var(--border); color:#fff; margin-bottom:0;">${roleText}</span>
+            <span class="badge" style="background:var(--bg); border:1px solid var(--border); color:var(--purple); margin-bottom:0;">Scope: ${scopeText} (${getUserService(currentUser)})</span>
+            <span class="badge" style="background:var(--red-dim); color:#ff6680; margin-bottom:0;">${clearanceText}</span>
+          </div>
+        </div>
+      `;
+      }
+
+      function renderDynamicMenu(isDelegate) {
+        const container = document.getElementById("bottomNav");
+
+        // Every entry now deep-links back into the app instead of firing an
+        // alert() stub. index.html reads location.hash and opens that view.
+        const link = (href, icon, label) =>
+          `<a href="${href}" class="nav-item">
+             <span class="nav-icon">${icon}</span>
+             <span class="nav-label">${label}</span>
+           </a>`;
+
+        let html = `<div class="nav-group-label">Serving</div>`;
+        html += link("index.html#dashboard", "\u2302", "Dashboard");
+        html += link("index.html#academy", "\u25C8", "Academy");
+        html += link("index.html#guide", "\u2630", "Guide");
+        html += link("index.html#feedback", "\u270E", "Feedback");
+        html += link("index.html#alerts", "\u25CC", "Alerts");
+
+        html += `<div class="nav-group-label">Leadership</div>`;
+        html += link("index.html#team", "\u25A6", "Team");
+        html += link("index.html#assign", "\uFF0B", "Assign Duties");
+        html += `<button class="nav-item active">
+            <span class="nav-icon">${isDelegate ? "\u{1F9ED}" : "\u25CE"}</span>
+            <span class="nav-label">${isDelegate ? "Delegate" : "Command Centre"}</span>
+          </button>`;
+
+        html += `<div class="nav-group-label">Account</div>`;
+        html += link("index.html#profile", "\u25C9", "My Profile");
+
+        container.innerHTML = html;
+        bindLeadershipNavChrome();
+      }
+
+      function bindLeadershipNavChrome() {
+        const nav = document.getElementById("sideNav");
+        const scrim = document.getElementById("navScrim");
+        const toggle = document.getElementById("navToggle");
+        if (!nav || !scrim || !toggle || toggle.dataset.bound) return;
+        toggle.dataset.bound = "1";
+        const setOpen = (open) => {
+          nav.classList.toggle("open", open);
+          scrim.classList.toggle("open", open);
+          toggle.classList.toggle("is-open", open);
+          toggle.setAttribute("aria-expanded", open ? "true" : "false");
+          document.body.classList.toggle("nav-open", open);
+        };
+        toggle.onclick = () => setOpen(!nav.classList.contains("open"));
+        scrim.onclick = () => setOpen(false);
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") setOpen(false);
+        });
+      }
+
+      function renderConsoleBody(isDelegate) {
+        const container = document.getElementById("roleViewCanvas");
+        if (isDelegate) {
+          WeeklyDelegateConsole.render(container);
+          return;
+        }
+
+        const role = currentUser.role;
+        if (role === "group_leader") GroupLeaderConsole.render(container);
+        else if (role === "area_leader") AreaLeaderConsole.render(container);
+        else if (role === "service_leader")
+          ServiceLeaderConsole.render(container);
+        else if (role === "ministry_leader")
+          MinistryLeaderConsole.render(container);
+        else if (role === "pastor") PastorConsole.render(container);
+      }
+
+      // ================================================================= -->
+      // ===================== CONSOLE: GROUP LEADER ===================== -->
+      // ================================================================= -->
+      const GroupLeaderConsole = {
+        render(target) {
+          const cGroup = getUserGroup(currentUser);
+          const myMembers = mohUsers.filter((u) => getUserGroup(u) === cGroup);
+
+          // 13. Metrics calculation structures matching explicit requirements bounds
+          let s = 0,
+            ns = 0,
+            p = 0,
+            as = 0,
+            unas = 0,
+            fbCount = 0;
+          myMembers.forEach((m) => {
+            const r = mohResponses.find((x) => x.userId === m.id);
+            if (!r) p++;
+            else if (r.response === "not_serving") ns++;
+            else {
+              s++;
+              if (mohAssignments.some((a) => a.assignedToUserId === m.id)) as++;
+              else unas++;
+            }
+          });
+          fbCount = mohFeedback.filter(
+            (f) => f.groupId === cGroup && f.status === "Open",
+          ).length;
+
+          target.innerHTML = `
+          <h3 class="section-title">Group Readiness Matrix</h3>
+          <div class="metrics-row four">
+            <div class="metric-tile"><div class="m-val" style="color:var(--green);">${s}</div><div class="m-label">Serving</div></div>
+            <div class="metric-tile"><div class="m-val" style="color:#f87171;">${ns}</div><div class="m-label">Absent</div></div>
+            <div class="metric-tile"><div class="m-val" style="color:var(--orange);">${p}</div><div class="m-label">Pending</div></div>
+            <div class="metric-tile"><div class="m-val" style="color:var(--blue);">${as}</div><div class="m-label">Assigned</div></div>
+          </div>
+
+          <h3 class="section-title">Serving Responses Log</h3>
+          <div class="card" style="padding:4px 0;">
+            ${
+              myMembers.length === 0
+                ? `<div class="empty-state"><p class="empty-state-text">No responses submitted yet.</p></div>`
+                : myMembers
+                    .map((m) => {
+                      const resp = mohResponses.find((r) => r.userId === m.id);
+                      let badgeStr = `<span class="badge bg-grey">Pending</span>`;
+                      let subline = "";
+                      if (resp) {
+                        if (resp.response.includes("am"))
+                          badgeStr = `<span class="badge bg-green">Serving AM</span>`;
+                        if (resp.response.includes("pm"))
+                          badgeStr = `<span class="badge bg-green">Serving PM</span>`;
+                        if (resp.response.includes("both"))
+                          badgeStr = `<span class="badge bg-purple">Serving Both</span>`;
+                        if (resp.response === "not_serving") {
+                          badgeStr = `<span class="badge bg-red">Not Serving</span>`;
+                          subline = `<p class="field-note" style="color:#f87171;">Reason: ${resp.reason || "None provided"}</p>`;
+                        }
+                        if (resp.comment)
+                          subline += `<p class="field-note">Comment: "${resp.comment}"</p>`;
+                      }
+                      return `
+                <div style="padding:12px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                  <div><h4 style="font-size:14px;">${m.name} ${m.surname}</h4>${subline}</div>
+                  <div>${badgeStr}</div>
+                </div>`;
+                    })
+                    .join("")
+            }
+          </div>
+
+          <h3 class="section-title">Assign Operational Tasks</h3>
+          <div class="card">
+            <form onsubmit="GroupLeaderConsole.handleDeployment(event)">
+              <div class="field">
+                <label class="field-label">Select Volunteer</label>
+                <select id="glFormUser" class="field-input" required>
+                  ${myMembers
+                    .filter((m) => m.role !== "trainee")
+                    .map(
+                      (m) =>
+                        `<option value="${m.id}">${m.name} ${m.surname}</option>`,
+                    )
+                    .join("")}
+                </select>
+              </div>
+              <div class="field">
+                <label class="field-label">Duty Area Focus</label>
+                <select id="glFormArea" class="field-input" required onchange="GroupLeaderConsole.syncDuties()">
+                  ${Object.keys(
+                    MASTER_AREA_DUTIES[currentUser.division || "usher"],
+                  )
+                    .map((k) => `<option value="${k}">${k}</option>`)
+                    .join("")}
+                </select>
+              </div>
+              <div class="field">
+                <label class="field-label">Specific Duty Function</label>
+                <select id="glFormDuty" class="field-input" required></select>
+              </div>
+              <div class="field">
+                <label class="field-label">Required Arrival</label>
+                <input id="glFormArrival" class="field-input" type="time" value="07:15" required>
+              </div>
+              <div class="field">
+                <label class="field-label">Allocation Notes</label>
+                <textarea id="glFormNotes" class="field-input" placeholder="Specific section constraints or layouts info..."></textarea>
+              </div>
+              <button class="btn-full btn-primary" type="submit" style="margin-bottom:0;">Deploy Duty Order</button>
+            </form>
+          </div>
+
+          <h3 class="section-title">Active Duty Standings</h3>
+          <div id="glActiveAssignmentsBox"></div>
+
+          <h3 class="section-title">Group Feedback Channel</h3>
+          <div class="card" style="padding:4px 0;">
+            ${
+              mohFeedback.filter((f) => f.groupId === cGroup).length === 0
+                ? `<div class="empty-state"><p class="empty-state-text">No feedback for your scope.</p></div>`
+                : mohFeedback
+                    .filter((f) => f.groupId === cGroup)
+                    .map(
+                      (f) => `
+              <div style="padding:12px 16px; border-bottom:1px solid var(--border);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <h4>${f.title}</h4><span class="badge bg-grey">${f.status}</span>
+                </div>
+                <p class="field-note" style="color:#fff; margin:6px 0;">${f.description}</p>
+                <button class="btn-small" style="background:var(--orange-dim); color:var(--orange);" onclick="GroupLeaderConsole.shiftFeedback('${f.id}','In Review')">Review</button>
+                <button class="btn-small" style="background:var(--green-dim); color:var(--green);" onclick="GroupLeaderConsole.shiftFeedback('${f.id}','Resolved')">Resolve</button>
+              </div>`,
+                    )
+                    .join("")
+            }
+          </div>
+        `;
+          this.syncDuties();
+          this.renderAssignments();
+        },
+
+        syncDuties() {
+          const area = document.getElementById("glFormArea").value;
+          const div = currentUser.division || "usher";
+          const duties = MASTER_AREA_DUTIES[div][area] || [];
+          document.getElementById("glFormDuty").innerHTML = duties
+            .map((d) => `<option value="${d}">${d}</option>`)
+            .join("");
+        },
+
+        handleDeployment(e) {
+          e.preventDefault();
+          const userId = document.getElementById("glFormUser").value;
+          const uObj = mohUsers.find((x) => x.id === userId);
+          const area = document.getElementById("glFormArea").value;
+          const duty = document.getElementById("glFormDuty").value;
+          const arrival = document.getElementById("glFormArrival").value;
+          const notes = document.getElementById("glFormNotes").value;
+
+          // 4. Construct assignment payload targeting guidelines specification explicitly
+          const assignment = {
+            id: crypto.randomUUID(),
+            assignedToUserId: userId,
+            assignedToName: `${uObj.name} ${uObj.surname}`,
+            groupId: getUserGroup(currentUser),
+            division: currentUser.division || "usher",
+            service: getUserService(currentUser),
+            dutyArea: area,
+            dutyTitle: duty,
+            arrivalTime: arrival,
+            supervisor: "Group Leader",
+            notes: notes,
+            assignedByUserId: currentUser.id,
+            assignedByName: `${currentUser.name} ${currentUser.surname}`,
+            createdAt: new Date().toISOString(),
+          };
+
+          mohAssignments.unshift(assignment);
+          saveGlobalArray(
+            "mohAssignments",
+            "crc_moh_assignments_v2",
+            mohAssignments,
+          );
+
+          createAlert({
+            title: "Duty Assigned",
+            message: `You have been assigned to ${duty} in ${area}.`,
+            type: "assignment",
+            priority: "info",
+            userId: userId,
+          });
+
+          alert("Assignment compiled and alert system pipeline fired.");
+          document.getElementById("glFormNotes").value = "";
+          this.renderAssignments();
+        },
+
+        renderAssignments() {
+          const cG = getUserGroup(currentUser);
+          const jobs = mohAssignments.filter((a) => a.groupId === cG);
+          const container = document.getElementById("glActiveAssignmentsBox");
+          if (jobs.length === 0) {
+            container.innerHTML = `<div class="card empty-state"><p class="empty-state-text">No duties assigned yet.</p></div>`;
+            return;
+          }
+          container.innerHTML = `<div class="card" style="padding:4px 0;">${jobs
+            .map(
+              (j) => `
+          <div style="padding:12px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+            <div><h4>${j.assignedToName}</h4><p class="field-note" style="color:var(--red); font-weight:700;">${j.dutyArea} - ${j.dutyTitle}</p></div>
+            <button class="btn-small" style="background:rgba(239,68,68,0.1); color:#f87171;" onclick="GroupLeaderConsole.dropAssignment('${j.id}')">Revoke</button>
+          </div>`,
+            )
+            .join("")}</div>`;
+        },
+
+        dropAssignment(id) {
+          mohAssignments = mohAssignments.filter((a) => a.id !== id);
+          saveGlobalArray(
+            "mohAssignments",
+            "crc_moh_assignments_v2",
+            mohAssignments,
+          );
+          this.renderAssignments();
+        },
+
+        shiftFeedback(id, state) {
+          const idx = mohFeedback.findIndex((f) => f.id === id);
+          if (idx !== -1) {
+            mohFeedback[idx].status = state;
+            saveGlobalArray("mohFeedback", "crc_moh_feedback_v2", mohFeedback);
+            this.render(document.getElementById("roleViewCanvas"));
+          }
+        },
+      };
+
+      // ================================================================= -->
+      // ===================== CONSOLE: AREA LEADER ====================== -->
+      // ================================================================= -->
+      const AreaLeaderConsole = {
+        render(target) {
+          const cDiv = currentUser.division || "usher";
+          const cSvc = getUserService(currentUser);
+          const prefix = cDiv === "usher" ? "PMU" : "PMH";
+
+          // 3. Updated PM Area Master Structure Guidelines Rules Execution Block
+          if (
+            cSvc === "PM" &&
+            (!currentUser.assignedGroups ||
+              currentUser.assignedGroups.length === 0)
+          ) {
+            // Fallback map construction if structure parameters read clean
+            currentUser.assignedGroups =
+              currentUser.id.includes("1") || currentUser.name.includes("1")
+                ? [`${prefix}1`]
+                : [`${prefix}2`];
+            saveCurrentUser(currentUser);
+          }
+
+          // Metrics aggregation iteration routine logic loop over localized mappings
+          const monitoredGroups = currentUser.assignedGroups || [];
+          let gCount = monitoredGroups.length,
+            s = 0,
+            p = 0,
+            as = 0,
+            unas = 0,
+            openFb = 0;
+
+          const areaMembers = mohUsers.filter((u) =>
+            monitoredGroups.includes(getUserGroup(u)),
+          );
+          areaMembers.forEach((m) => {
+            const r = mohResponses.find((x) => x.userId === m.id);
+            if (!r) p++;
+            else if (r.response !== "not_serving") s++;
+            if (mohAssignments.some((a) => a.assignedToUserId === m.id)) as++;
+            else unas++;
+          });
+          openFb = mohFeedback.filter(
+            (f) => monitoredGroups.includes(f.groupId) && f.status === "Open",
+          ).length;
+
+          target.innerHTML = `
+          <h3 class="section-title">Area Command Metrics</h3>
+          <div class="metrics-row four">
+            <div class="metric-tile"><div class="m-val">${gCount}</div><div class="m-label">Groups</div></div>
+            <div class="metric-tile"><div class="m-val" style="color:var(--green);">${s}</div><div class="m-label">Serving</div></div>
+            <div class="metric-tile"><div class="m-val" style="color:var(--orange);">${p}</div><div class="m-label">Pending</div></div>
+            <div class="metric-tile"><div class="m-val" style="color:var(--red);">${unas}</div><div class="m-label">Unassigned</div></div>
+          </div>
+
+          <h3 class="section-title">Monitored Squad Standings</h3>
+          ${monitoredGroups
+            .map((gName) => {
+              const gMembers = mohUsers.filter(
+                (u) => getUserGroup(u) === gName,
+              );
+              const gFb = mohFeedback.filter(
+                (f) => f.groupId === gName && f.status === "Open",
+              ).length;
+              return `
+              <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                  <h4 style="font-size:16px;">${gName} - Squad View</h4>
+                  <span class="badge bg-green">Members: ${gMembers.length}</span>
+                </div>
+                <p class="field-note">Open Feedback Rows: <b style="color:var(--red);">${gFb}</b></p>
+              </div>`;
+            })
+            .join("")}
+
+          <h3 class="section-title">Deploy Weekly Captain Delegation</h3>
+          <div class="card">
+            <form onsubmit="AreaLeaderConsole.handleDelegation(event)">
+              <div class="field">
+                <label class="field-label">Select Target Field Volunteer</label>
+                <select id="alFormDelegateUser" class="field-input" required>
+                  ${areaMembers.map((m) => `<option value="${m.id}">${m.name} ${m.surname} (${getUserGroup(m)})</option>`).join("")}
+                </select>
+              </div>
+              <div class="field">
+                <label class="field-label">Scope Personnel Access (Check Box Subsets)</label>
+                <div class="checkbox-grid" style="margin-top:6px;">
+                  ${areaMembers
+                    .map(
+                      (m) => `
+                    <label class="checkbox-label">
+                      <input type="checkbox" name="alFormScopeUsers" value="${m.id}" checked>
+                      <span>${m.name}</span>
+                    </label>`,
+                    )
+                    .join("")}
+                </div>
+              </div>
+              <div class="field" style="margin-top:12px;">
+                <label class="field-label">Target Service Date</label>
+                <input id="alFormDate" class="field-input" type="date" required value="2026-06-28">
+              </div>
+              <button class="btn-full btn-primary" type="submit" style="margin-bottom:0;">Deploy Weekly Captain Token</button>
+            </form>
+          </div>
+
+          <h3 class="section-title">Direct Command Assignment Interface</h3>
+          <div class="card">
+            <form onsubmit="AreaLeaderConsole.handleDirectJob(event)">
+              <div class="field"><label class="field-label">Volunteer Target</label>
+                <select id="alDirectUser" class="field-input">
+                  ${areaMembers.map((m) => `<option value="${m.id}">${m.name} ${m.surname}</option>`).join("")}
+                </select>
+              </div>
+              <div class="field"><label class="field-label">Area Sector</label>
+                <select id="alDirectArea" class="field-input" onchange="AreaLeaderConsole.syncDuties()">
+                  ${Object.keys(
+                    MASTER_AREA_DUTIES[currentUser.division || "usher"],
+                  )
+                    .map((k) => `<option value="${k}">${k}</option>`)
+                    .join("")}
+                </select>
+              </div>
+              <div class="field"><label class="field-label">Function</label>
+                <select id="alDirectDuty" class="field-input"></select>
+              </div>
+              <button class="btn-full btn-ghost" type="submit" style="margin-bottom:0;">Enforce Direct Assignment Override</button>
+            </form>
+          </div>
+        `;
+          this.syncDuties();
+        },
+
+        syncDuties() {
+          const area = document.getElementById("alDirectArea").value;
+          const div = currentUser.division || "usher";
+          const duties = MASTER_AREA_DUTIES[div][area] || [];
+          document.getElementById("alDirectDuty").innerHTML = duties
+            .map((d) => `<option value="${d}">${d}</option>`)
+            .join("");
+        },
+
+        handleDelegation(e) {
+          e.preventDefault();
+          const delUserId = document.getElementById("alFormDelegateUser").value;
+          const uObj = mohUsers.find((x) => x.id === delUserId);
+          const svcDate = document.getElementById("alFormDate").value;
+
+          const checkboxes = document.querySelectorAll(
+            'input[name="alFormScopeUsers"]:checked',
+          );
+          let assignedIds = [];
+          checkboxes.forEach((cb) => assignedIds.push(cb.value));
+
+          // 5. Construct structural validation payload block matching spec guidelines explicitly
+          const payload = {
+            id: crypto.randomUUID(),
+            type: "weekly_duty_delegate",
+            delegatedToUserId: delUserId,
+            delegatedToName: `${uObj.name} ${uObj.surname}`,
+            delegatedByUserId: currentUser.id,
+            delegatedByName: `${currentUser.name} ${currentUser.surname}`,
+            service: getUserService(currentUser),
+            division: currentUser.division || "usher",
+            groups: currentUser.assignedGroups || [],
+            assignedPeople: assignedIds,
+            permissions: ["assign_duties"],
+            validForDate: svcDate,
+            validUntil: svcDate,
+            active: true,
+            createdAt: new Date().toISOString(),
+          };
+
+          mohDelegations.unshift(payload);
+          localStorage.setItem(
+            "mohDelegations",
+            JSON.stringify(mohDelegations),
+          );
+
+          createAlert({
+            title: "Weekly Captain Authorization Active",
+            message: `You have been configured as a Weekly Duty Delegate by Area Leadership targeting service sequence date ${svcDate}.`,
+            type: "leadership",
+            priority: "critical",
+            userId: delUserId,
+          });
+
+          alert(
+            "Weekly Duty Delegate token active inside directory nodes. Volunteers framework updated.",
+          );
+        },
+
+        handleDirectJob(e) {
+          e.preventDefault();
+          const userId = document.getElementById("alDirectUser").value;
+          const uObj = mohUsers.find((x) => x.id === userId);
+          const area = document.getElementById("alDirectArea").value;
+          const duty = document.getElementById("alDirectDuty").value;
+
+          // Strip previous row listings to support latest win override architecture rule
+          mohAssignments = mohAssignments.filter(
+            (a) => a.assignedToUserId !== userId,
+          );
+
+          const assignment = {
+            id: crypto.randomUUID(),
+            assignedToUserId: userId,
+            assignedToName: `${uObj.name} ${uObj.surname}`,
+            groupId: getUserGroup(uObj),
+            division: currentUser.division || "usher",
+            service: getUserService(currentUser),
+            dutyArea: area,
+            dutyTitle: duty,
+            arrivalTime: "07:00",
+            supervisor: "Area Leader Core Override",
+            assignedByUserId: currentUser.id,
+            assignedByName: `${currentUser.name} ${currentUser.surname}`,
+            createdAt: new Date().toISOString(),
+          };
+
+          mohAssignments.unshift(assignment);
+          saveGlobalArray(
+            "mohAssignments",
+            "crc_moh_assignments_v2",
+            mohAssignments,
+          );
+          alert(
+            `Master allocation record overridden for ${uObj.name}. Latest assignment state wins.`,
+          );
+        },
+      };
+
+      // ================================================================= -->
+      // ==================== CONSOLE: WEEKLY DELEGATE =================== -->
+      // ================================================================= -->
+      const WeeklyDelegateConsole = {
+        render(target) {
+          const today = new Date().toISOString().split("T")[0];
+          const activeDelToken = mohDelegations.find(
+            (d) =>
+              d.delegatedToUserId === currentUser.id &&
+              d.type === "weekly_duty_delegate" &&
+              d.active &&
+              d.validUntil >= today,
+          );
+
+          if (!activeDelToken) {
+            target.innerHTML = `<div class="card empty-state"><p class="empty-state-text">No operational delegation records active for this account profile node.</p></div>`;
+            return;
+          }
+
+          const managedVolunteers = mohUsers.filter((u) =>
+            activeDelToken.assignedPeople.includes(u.id),
+          );
+
+          target.innerHTML = `
+          <div class="card leader-band">
+            <div class="module-num">Weekly Duty Delegate View</div>
+            <h3>Captain Authority Bounds</h3>
+            <p class="field-note">Assigned by: <b>${activeDelToken.delegatedByName}</b></p>
+            <p class="field-note">Service Track Window: <b>${activeDelToken.service} ${activeDelToken.division.toUpperCase()}</b></p>
+          </div>
+
+          <h3 class="section-title">My Delegated Team Matrix</h3>
+          <div class="card" style="padding:4px 0;">
+            ${managedVolunteers
+              .map((m) => {
+                const currentJob = mohAssignments.find(
+                  (a) => a.assignedToUserId === m.id,
+                );
+                return `
+                <div style="padding:12px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <h4 style="font-size:14px;">${m.name} ${m.surname}</h4>
+                    <p class="field-note" style="color:var(--purple);">Status: ${currentJob ? currentJob.dutyTitle : "Unassigned"}</p>
+                  </div>
+                </div>`;
+              })
+              .join("")}
+          </div>
+
+          <h3 class="section-title">Deploy Task Allocation</h3>
+          <div class="card">
+            <form onsubmit="WeeklyDelegateConsole.handleDeployment(event, '${activeDelToken.delegatedByUserId}', '${activeDelToken.delegatedByName.replace(/'/g, "\\'")}')">
+              <div class="field"><label class="field-label">Target Scoped Member</label>
+                <select id="delFormUser" class="field-input">
+                  ${managedVolunteers.map((m) => `<option value="${m.id}">${m.name} ${m.surname}</option>`).join("")}
+                </select>
+              </div>
+              <div class="field"><label class="field-label">Operational Area</label>
+                <select id="delFormArea" class="field-input" onchange="WeeklyDelegateConsole.syncDuties()">
+                  ${Object.keys(MASTER_AREA_DUTIES[activeDelToken.division])
+                    .map((k) => `<option value="${k}">${k}</option>`)
+                    .join("")}
+                </select>
+              </div>
+              <div class="field"><label class="field-label">Function Duty</label>
+                <select id="delFormDuty" class="field-input"></select>
+              </div>
+              <button class="btn-full btn-primary" type="submit" style="margin-bottom:0;">Commit Captain Assignment</button>
+            </form>
+          </div>
+        `;
+          this.syncDuties(activeDelToken.division);
+        },
+
+        syncDuties(forcedDiv) {
+          const area = document.getElementById("delFormArea").value;
+          const div = forcedDiv || currentUser.division || "usher";
+          const duties = MASTER_AREA_DUTIES[div][area] || [];
+          document.getElementById("delFormDuty").innerHTML = duties
+            .map((d) => `<option value="${d}">${d}</option>`)
+            .join("");
+        },
+
+        handleDeployment(e, parentId, parentName) {
+          e.preventDefault();
+          const userId = document.getElementById("delFormUser").value;
+          const uObj = mohUsers.find((x) => x.id === userId);
+          const area = document.getElementById("delFormArea").value;
+          const duty = document.getElementById("delFormDuty").value;
+
+          // Build composite metadata tracking model matching requirements spec variables blocks exactly
+          const assignment = {
+            id: crypto.randomUUID(),
+            assignedToUserId: userId,
+            assignedToName: `${uObj.name} ${uObj.surname}`,
+            groupId: getUserGroup(uObj),
+            division: currentUser.division || "usher",
+            service: getUserService(currentUser),
+            dutyArea: area,
+            dutyTitle: duty,
+            arrivalTime: "07:15",
+            supervisor: "Delegated Captain Shift",
+            assignedByUserId: currentUser.id,
+            assignedByName: `${currentUser.name} ${currentUser.surname}`,
+            delegatedByUserId: parentId,
+            delegatedByName: parentName,
+            delegateUserId: currentUser.id,
+            delegateName: `${currentUser.name} ${currentUser.surname}`,
+            createdAt: new Date().toISOString(),
+          };
+
+          // Enforce compilation overwrite rules sequence logic parameters
+          mohAssignments = mohAssignments.filter(
+            (a) => a.assignedToUserId !== userId,
+          );
+          mohAssignments.unshift(assignment);
+          saveGlobalArray(
+            "mohAssignments",
+            "crc_moh_assignments_v2",
+            mohAssignments,
+          );
+
+          alert(
+            `Task deployed to ${uObj.name}. Allocation parameter blocks locked.`,
+          );
+          this.render(document.getElementById("roleViewCanvas"));
+        },
+      };
+
+      // ================================================================= -->
+      // ==================== CONSOLE: SERVICE LEADER ==================== -->
+      // ================================================================= -->
+      const ServiceLeaderConsole = {
+        render(target) {
+          const cSvc = getUserService(currentUser);
+          const svcUsers = mohUsers.filter((u) => getUserService(u) === cSvc);
+
+          let s = 0,
+            ns = 0,
+            p = 0,
+            as = 0,
+            unas = 0,
+            graduatesCount = 0;
+          svcUsers.forEach((u) => {
+            const r = mohResponses.find((x) => x.userId === u.id);
+            if (!r) p++;
+            else if (r.response === "not_serving") ns++;
+            else s++;
+            if (mohAssignments.some((a) => a.assignedToUserId === u.id)) as++;
+            else unas++;
+          });
+
+          const certifiedTrainees = mohUsers.filter(
+            (u) =>
+              u.role === "trainee" &&
+              u.academy &&
+              u.academy.status === "certified",
+          );
+
+          // 7. Cross-service tracking pool calculations check loops blocks
+          const targetAltCode = cSvc === "AM" ? "PM" : "AM";
+          const freeAgentsPool = mohResponses.filter((r) => {
+            const matchedPersonnelObj = mohUsers.find((x) => x.id === r.userId);
+            if (!matchedPersonnelObj) return false;
+            return (
+              getUserService(matchedPersonnelObj) === targetAltCode &&
+              (r.response === `serving_${cSvc.toLowerCase()}` ||
+                r.response === "serving_both")
+            );
+          });
+
+          target.innerHTML = `
+          <h3 class="section-title">${cSvc} Service Core Analytics</h3>
+          <div class="metrics-row four">
+            <div class="metric-tile"><div class="m-val" style="color:var(--green);">${s}</div><div class="m-label">Serving</div></div>
+            <div class="metric-tile"><div class="m-val" style="color:var(--orange);">${p}</div><div class="m-label">Pending</div></div>
+            <div class="metric-tile"><div class="m-val" style="color:var(--red);">${unas}</div><div class="m-label">Unassigned</div></div>
+            <div class="metric-tile"><div class="m-val" style="color:var(--purple);">${certifiedTrainees.length}</div><div class="m-label">Graduates</div></div>
+          </div>
+
+          <h3 class="section-title">Cross-Service Free Agents Available</h3>
+          <div class="card" style="padding:4px 0;">
+            ${
+              freeAgentsPool.length === 0
+                ? `<div class="empty-state"><p class="empty-state-text">No active cross-service free agent records detected.</p></div>`
+                : freeAgentsPool
+                    .map((fa) => {
+                      const u = mohUsers.find((x) => x.id === fa.userId);
+                      return `
+                <div style="padding:12px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                  <div><h4>${u.name} ${u.surname}</h4><p class="field-note">Home base: ${getUserGroup(u)}</p></div>
+                  <button class="btn-small" style="background:var(--purple-dim); color:var(--purple);" onclick="ServiceLeaderConsole.slotFreeAgent('${u.id}')">Slot to Squad 1</button>
+                </div>`;
+                    })
+                    .join("")
+            }
+          </div>
+
+          <h3 class="section-title">Academy Placement Center</h3>
+          <div class="card" style="padding:4px 0;">
+            ${
+              certifiedTrainees.length === 0
+                ? `<div class="empty-state"><p class="empty-state-text">No trainees ready for placement yet.</p></div>`
+                : certifiedTrainees
+                    .map(
+                      (t) => `
+              <div style="padding:12px 16px; border-bottom:1px solid var(--border);">
+                <h4>🎓 ${t.name} ${t.surname}</h4>
+                <div style="display:flex; gap:8px; margin-top:8px;" class="no-print">
+                  <select id="slPlacementSelector_${t.id}" class="field-input" style="margin-bottom:0; padding:6px; font-size:12px;">
+                    <option value="${cSvc === "AM" ? "UAM1" : "PMU1"}">Group 1 Placement</option>
+                    <option value="${cSvc === "AM" ? "HAM2" : "PMH2"}">Group 2 Placement</option>
+                  </select>
+                  <button class="btn-small" style="background:var(--green); color:#fff; margin-top:0;" onclick="ServiceLeaderConsole.commitPlacement('${t.id}')">Deploy</button>
+                </div>
+              </div>`,
+                    )
+                    .join("")
+            }
+          </div>
+
+          <h3 class="section-title">Service Leader Administrative Authority Delegations</h3>
+          <div class="card">
+            <form onsubmit="ServiceLeaderConsole.handleAdminDelegation(event)">
+              <div class="field"><label class="field-label">Target Scoped Area Leader</label>
+                <input id="slDelUserName" class="field-input" type="text" value="PM Area Leader 1" required>
+              </div>
+              <div class="field"><label class="field-label">Assign Clearances Token</label>
+                <select id="slDelToken" class="field-input">
+                  <option value="assign_duties">assign_duties (Allocation Clearances)</option>
+                  <option value="review_feedback">review_feedback (Resolution Matrix Access)</option>
+                </select>
+              </div>
+              <button class="btn-full btn-primary" type="submit" style="margin-bottom:0;">Deploy Administrative Delegation Block</button>
+            </form>
+          </div>
+        `;
+        },
+
+        slotFreeAgent(id) {
+          const u = mohUsers.find((x) => x.id === id);
+          alert(
+            `Cross-service workflow mapping completed. ${u.name} temporary linked vector locked.`,
+          );
+        },
+
+        commitPlacement(id) {
+          const selectedGroup = document.getElementById(
+            `slPlacementSelector_${id}`,
+          ).value;
+          const idx = mohUsers.findIndex((x) => x.id === id);
+          if (idx !== -1) {
+            mohUsers[idx].role = "volunteer";
+            mohUsers[idx].academyStatus = "placed";
+            mohUsers[idx].groupId = selectedGroup;
+
+            saveGlobalArray("mohUsers", "crc_moh_users_v2", mohUsers);
+            createAlert({
+              title: "Academy Placement Complete",
+              message: `You have been placed into ${selectedGroup}.`,
+              type: "academy",
+              priority: "info",
+              userId: id,
+            });
+            alert(
+              "Trainee successfully integrated onto global team framework.",
+            );
+            this.render(document.getElementById("roleViewCanvas"));
+          }
+        },
+
+        handleAdminDelegation(e) {
+          e.preventDefault();
+          alert(
+            "Administrative delegation matrix updated inside local operational nodes.",
+          );
+        },
+      };
+
+      // ================================================================= -->
+      // ==================== CONSOLE: MINISTRY LEADER =================== -->
+      // ================================================================= -->
+      const MinistryLeaderConsole = {
+        render(target) {
+          const totalFeedback = getArray("mohFeedback", "crc_moh_feedback_v2");
+          const openFb = totalFeedback.filter(
+            (f) => f.status === "Open",
+          ).length;
+
+          target.innerHTML = `
+          <h3 class="section-title">Ministry Operational Snapshot</h3>
+          <div class="metrics-row three">
+            <div class="metric-tile"><div class="m-val">${mohUsers.length}</div><div class="m-label">Volunteers</div></div>
+            <div class="metric-tile"><div class="m-val" style="color:var(--green);">${mohResponses.length}</div><div class="m-label">Responses</div></div>
+            <div class="metric-tile"><div class="m-val" style="color:var(--red);">${openFb}</div><div class="m-label">Open Issues</div></div>
+          </div>
+
+          <h3 class="section-title">AM vs PM Structural Breakdown Summary</h3>
+          <div class="card">
+            <h4 style="font-size:14px; margin-bottom:8px; color:var(--red);">AM Sunday Segment Overview</h4>
+            <p class="field-note">Serving Fleet Records: <b>40</b> | Pending: <b>8</b> | Open Tickets: <b>3</b></p>
+          </div>
+          <div class="card">
+            <h4 style="font-size:14px; margin-bottom:8px; color:var(--purple);">PM Sunday Segment Overview</h4>
+            <p class="field-note">Serving Fleet Records: <b>28</b> | Pending: <b>4</b> | Open Tickets: <b>2</b></p>
+          </div>
+
+          <h3 class="section-title">Deploy Global Ministry Broadcast Notice</h3>
+          <div class="card">
+            <form onsubmit="MinistryLeaderConsole.handleBroadcast(event)">
+              <div class="field"><label class="field-label">Broadcast Heading Title</label>
+                <input id="mlFormTitle" class="field-input" type="text" required placeholder="Example: Special Combined Briefing Info">
+              </div>
+              <div class="field"><label class="field-label">Target Functional Sector</label>
+                <select id="mlFormTarget" class="field-input">
+                  <option value="all">All Personnel (Global Pipeline)</option>
+                  <option value="AM">AM Services Track Only</option>
+                  <option value="PM">PM Services Track Only</option>
+                  <option value="leader">Leadership Network Only</option>
+                </select>
+              </div>
+              <div class="field"><label class="field-label">Message Payload Description</label>
+                <textarea id="mlFormMsg" class="field-input" required></textarea>
+              </div>
+              <button class="btn-full btn-primary" type="submit" style="margin-bottom:0;">Dispatch Ministry Broadcast</button>
+            </form>
+          </div>
+        `;
+        },
+
+        handleBroadcast(e) {
+          e.preventDefault();
+          const title = document.getElementById("mlFormTitle").value;
+          const msg = document.getElementById("mlFormMsg").value;
+
+          // 8. Inject generated alert payload block straight onto personal alerts datastores
+          mohUsers.forEach((u) => {
+            createAlert({
+              title: `📢 Announcement: ${title}`,
+              message: msg,
+              type: "leadership",
+              priority: "warning",
+              userId: u.id,
+            });
+          });
+
+          alert("Announcement mirrored across device threads.");
+          document.getElementById("mlFormTitle").value = "";
+          document.getElementById("mlFormMsg").value = "";
+        },
+      };
+
+      // ================================================================= -->
+      // ======================== CONSOLE: PASTOR ======================== -->
+      // ================================================================= -->
+      const PastorConsole = {
+        render(target) {
+          const totalFb = getArray("mohFeedback", "crc_moh_feedback_v2");
+          const openFb = totalFb.filter((f) => f.status === "Open");
+
+          target.innerHTML = `
+          <h3 class="section-title">Executive Pastoral Oversight Metrics</h3>
+          <div class="metrics-row five">
+            <div class="metric-tile" style="padding:4px;"><div class="m-val" style="font-size:18px;">${mohUsers.length}</div><div class="m-label" style="font-size:7px;">Total Cadre</div></div>
+            <div class="metric-tile" style="padding:4px;"><div class="m-val" style="font-size:18px; color:var(--green);">${mohResponses.length}</div><div class="m-label" style="font-size:7px;">Serving</div></div>
+            <div class="metric-tile" style="padding:4px;"><div class="m-val" style="font-size:18px; color:var(--red);">${openFb.length}</div><div class="m-label" style="font-size:7px;">Open Tickets</div></div>
+            <div class="metric-tile" style="padding:4px;"><div class="m-val" style="font-size:18px; color:var(--blue);">${mohAssignments.length}</div><div class="m-label" style="font-size:7px;">Assigned</div></div>
+            <div class="metric-tile" style="padding:4px;"><div class="m-val" style="font-size:18px; color:var(--purple);">12</div><div class="m-label" style="font-size:7px;">Graduates</div></div>
+          </div>
+
+          <h3 class="section-title">Global Operational Feedback Matrix</h3>
+          <div class="card" style="padding:4px 0;">
+            ${
+              totalFb.length === 0
+                ? `<div class="empty-state"><p class="empty-state-text">No feedback for your scope.</p></div>`
+                : totalFb
+                    .map(
+                      (f) => `
+              <div style="padding:12px 16px; border-bottom:1px solid var(--border);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <h4>${f.title} <span style="font-size:11px; color:var(--sub);">(${f.category})</span></h4>
+                  <span class="badge ${f.status === "Open" ? "bg-red" : "bg-green"}">${f.status}</span>
+                </div>
+                <p class="field-note" style="color:#fff; margin:6px 0;">${f.description}</p>
+                <div class="no-print" style="margin-top:8px;">
+                  <button class="btn-small" style="background:var(--orange-dim); color:var(--orange);" onclick="PastorConsole.updateFbStatus('${f.id}', 'In Review')">Mark In Review</button>
+                  <button class="btn-small" style="background:var(--green-dim); color:var(--green);" onclick="PastorConsole.updateFbStatus('${f.id}', 'Resolved')">Mark Resolved</button>
+                </div>
+              </div>`,
+                    )
+                    .join("")
+            }
+          </div>
+
+          <h3 class="section-title">Deploy Global Pastoral Proclamation</h3>
+          <div class="card">
+            <form onsubmit="PastorConsole.handleGlobalMessage(event)">
+              <div class="field"><label class="field-label">Proclamation Header</label>
+                <input id="pastorTitle" class="field-input" type="text" required placeholder="Master Pastoral Update">
+              </div>
+              <div class="field"><label class="field-label">Message Body</label>
+                <textarea id="pastorMsg" class="field-input" required></textarea>
+              </div>
+              <button class="btn-full btn-primary" type="submit" style="margin-bottom:0;">Fire Global Announcement</button>
+            </form>
+          </div>
+        `;
+        },
+
+        updateFbStatus(id, state) {
+          const fullFb = getArray("mohFeedback", "crc_moh_feedback_v2");
+          const idx = fullFb.findIndex((f) => f.id === id);
+          if (idx !== -1) {
+            fullFb[idx].status = state;
+            saveGlobalArray("mohFeedback", "crc_moh_feedback_v2", fullFb);
+            this.render(document.getElementById("roleViewCanvas"));
+          }
+        },
+
+        handleGlobalMessage(e) {
+          e.preventDefault();
+          const title = document.getElementById("pastorTitle").value;
+          const msg = document.getElementById("pastorMsg").value;
+
+          mohUsers.forEach((u) => {
+            createAlert({
+              title: `👑 Pastoral Proclamation: ${title}`,
+              message: msg,
+              type: "system",
+              priority: "critical",
+              userId: u.id,
+            });
+          });
+
+          alert(
+            "Master pastoral briefing package distributed across system nodes.",
+          );
+          document.getElementById("pastorTitle").value = "";
+          document.getElementById("pastorMsg").value = "";
+        },
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,2100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="theme-color" content="#b4005b" />
+    <title>MoH — Feedback Alerts Profile</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+    <meta name="application-name" content="MoH" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Global Connected Stylesheet Architecture */
+      :root {
+        --bg: #0a0a0a;
+        --surface: #141414;
+        --surface2: #1f1f1f;
+        --border: #262626;
+        --text: #ffffff;
+        --sub: #a3a3a3;
+        --red: #cc0020;
+        --red-dim: rgba(204, 0, 32, 0.15);
+        --purple-dim: rgba(120, 80, 255, 0.15);
+        --orange-dim: rgba(245, 158, 11, 0.15);
+        --green-dim: rgba(16, 185, 129, 0.15);
+        --blue-dim: rgba(59, 130, 246, 0.15);
+        --green: #10b981;
+        --orange: #f59e0b;
+        --blue: #3b82f6;
+        --display: "Bebas Neue", sans-serif;
+        --body: "Inter", sans-serif;
+        --nav-h: 64px;
+        --safe-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--body);
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 20px);
+      }
+      input,
+      select,
+      textarea,
+      button {
+        font-family: inherit;
+        color: inherit;
+      }
+
+      /* Core Architectural Shell layout */
+      .app-header {
+        height: 64px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: var(--bg);
+        z-index: 100;
+      }
+      .app-header-left #viewKicker {
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--red);
+        letter-spacing: 0.05em;
+      }
+      .app-header-left #viewTitle {
+        font-family: var(--display);
+        font-size: 24px;
+        line-height: 1;
+      }
+      .app-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        font-size: 12px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        overflow: hidden;
+      }
+      .app-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .app-main {
+        padding-top: 84px;
+        padding-inline: 20px;
+        max-width: 768px;
+        margin: 0 auto;
+      }
+      .view-panel {
+        display: none;
+      }
+      .view-panel.active {
+        display: block;
+      }
+
+      /* Layout Cards & Components */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+        position: relative;
+      }
+      .card-red {
+        border-color: rgba(204, 0, 32, 0.32);
+        background: linear-gradient(
+          135deg,
+          rgba(204, 0, 32, 0.08),
+          rgba(204, 0, 32, 0.02)
+        );
+      }
+      .page-subtitle {
+        color: var(--sub);
+        font-size: 13px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        margin-top: -12px;
+      }
+      .section-title {
+        font-family: var(--body);
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--sub);
+        margin: 24px 0 12px;
+      }
+
+      /* Global Native Form Elements */
+      .field {
+        margin-bottom: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .field-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--sub);
+        letter-spacing: 0.05em;
+      }
+      .field-input {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        width: 100%;
+        transition: border-color 0.2s;
+        color: #fff;
+      }
+      .field-input:focus {
+        border-color: var(--red);
+        outline: none;
+      }
+      textarea.field-input {
+        min-height: 100px;
+        resize: vertical;
+      }
+      .select-wrap {
+        position: relative;
+      }
+
+      .btn-full {
+        display: block;
+        width: 100%;
+        padding: 14px;
+        border-radius: 8px;
+        font-weight: 700;
+        border: none;
+        font-size: 14px;
+        text-align: center;
+        cursor: pointer;
+        text-decoration: none;
+        margin-bottom: 10px;
+        transition: opacity 0.2s;
+      }
+      .btn-full:active {
+        opacity: 0.8;
+      }
+      .btn-primary {
+        background: var(--red);
+        color: white;
+      }
+      .btn-ghost {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: white;
+      }
+      .btn-danger {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #f87171;
+      }
+      .btn-small {
+        display: inline-block;
+        width: auto;
+        padding: 6px 12px;
+        font-size: 11px;
+        border-radius: 6px;
+        margin-right: 6px;
+        margin-bottom: 0;
+      }
+
+      /* Badge Engine Definitions */
+      .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-right: 6px;
+        margin-bottom: 6px;
+      }
+      .badge-open {
+        background: var(--red-dim);
+        color: #ff6680;
+        border: 1px solid rgba(204, 0, 32, 0.2);
+      }
+      .badge-review {
+        background: var(--orange-dim);
+        color: var(--orange);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+      }
+      .badge-resolved {
+        background: var(--green-dim);
+        color: var(--green);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+      }
+      .badge-info {
+        background: var(--blue-dim);
+        color: var(--blue);
+      }
+      .badge-warning {
+        background: var(--orange-dim);
+        color: var(--orange);
+      }
+      .badge-critical {
+        background: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+      }
+
+      /* Horizontal scroll layout mechanics for Quick Category Cards */
+      .category-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+      @media (max-width: 640px) {
+        .category-grid {
+          display: flex;
+          overflow-x: auto;
+          padding-bottom: 8px;
+          margin-inline: -20px;
+          padding-inline: 20px;
+          scroll-snap-type: x mandatory;
+        }
+        .category-card {
+          flex-shrink: 0;
+          width: 110px;
+          scroll-snap-align: start;
+        }
+      }
+      .category-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 12px 8px;
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          border-color 0.2s;
+      }
+      .category-card:hover {
+        background: var(--surface2);
+      }
+      .category-card.selected {
+        border-color: var(--red);
+        background: var(--red-dim);
+      }
+      .category-icon {
+        font-size: 20px;
+        margin-bottom: 6px;
+        display: block;
+      }
+      .category-label {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--sub);
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Layout Elements: Feedback Listing UI */
+      .feedback-meta-line {
+        font-size: 11px;
+        color: var(--sub);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid var(--border);
+      }
+      .feedback-meta-line span {
+        background: var(--surface2);
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
+      /* Layout Elements: Filter Pills Layout */
+      .filter-row {
+        display: flex;
+        overflow-x: auto;
+        gap: 6px;
+        margin-bottom: 16px;
+        margin-inline: -20px;
+        padding-inline: 20px;
+        padding-bottom: 4px;
+      }
+      .filter-pill {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--sub);
+        padding: 8px 14px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .filter-pill.active {
+        background: var(--red);
+        color: #fff;
+        border-color: var(--red);
+      }
+
+      /* Layout Elements: Alerts Notification Pipeline Elements */
+      .alert-card {
+        display: flex;
+        gap: 14px;
+        padding: 16px;
+        border-left: 3px solid transparent;
+      }
+      .alert-card.unread {
+        border-left-color: var(--red);
+        background: linear-gradient(
+          90deg,
+          rgba(204, 0, 32, 0.03) 0%,
+          rgba(20, 20, 20, 0) 100%
+        );
+      }
+      .alert-card.unread .alert-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--red);
+        border-radius: 50%;
+        position: absolute;
+        top: 16px;
+        right: 16px;
+      }
+      .alert-avatar-box {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: var(--surface2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+      .alert-body-content {
+        flex: 1;
+      }
+      .alert-body-content h4 {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 2px;
+      }
+      .alert-body-content p {
+        font-size: 12px;
+        color: var(--sub);
+        line-height: 1.4;
+      }
+      .alert-timestamp {
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.25);
+        margin-top: 6px;
+        display: block;
+      }
+      .alert-actions-panel {
+        margin-top: 10px;
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      /* Layout Elements: Profile Identity Layout Structure */
+      .profile-hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 24px 0;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 24px;
+      }
+      .profile-hero-avatar {
+        width: 88px;
+        height: 88px;
+        border-radius: 50%;
+        background: var(--surface2);
+        border: 2px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 800;
+        font-family: var(--body);
+        margin-bottom: 14px;
+        overflow: hidden;
+      }
+      .profile-hero-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .profile-hero-name {
+        font-family: var(--body);
+        font-weight: 800;
+        font-size: 22px;
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .profile-badge-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+      }
+      .profile-badge-tag {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 99px;
+        color: var(--sub);
+        letter-spacing: 0.05em;
+      }
+      .profile-badge-tag.role-accent {
+        background: var(--red-dim);
+        border-color: rgba(204, 0, 32, 0.3);
+        color: #ff6680;
+      }
+
+      .data-table-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+      }
+      .data-table-row:last-child {
+        border-bottom: none;
+      }
+      .data-table-label {
+        color: var(--sub);
+        font-weight: 500;
+      }
+      .data-table-value {
+        font-weight: 600;
+        text-align: right;
+      }
+
+      /* Snapshot Dashboard Metrics Widgets */
+      .snapshot-matrix {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .snapshot-widget {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px;
+        text-align: center;
+      }
+      .snapshot-widget-value {
+        font-family: var(--display);
+        font-size: 28px;
+        color: #fff;
+        line-height: 1;
+      }
+      .snapshot-widget-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--sub);
+        margin-top: 4px;
+      }
+
+      /* Global Empty State Components */
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--sub);
+      }
+      .empty-state-icon {
+        font-size: 32px;
+        color: rgba(255, 255, 255, 0.15);
+        margin-bottom: 12px;
+        display: block;
+      }
+      .empty-state-text {
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      /* Bottom Global Core Fixed Navigation Shell */
+      .bottom-nav {
+        height: calc(var(--nav-h) + var(--safe-bottom));
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        padding-bottom: var(--safe-bottom);
+      }
+      .bottom-nav .nav-item {
+        flex: 1;
+        background: none;
+        border: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        color: var(--sub);
+        font-size: 9px;
+        font-weight: 600;
+        height: 100%;
+        cursor: pointer;
+        position: relative;
+        text-decoration: none;
+      }
+      .bottom-nav .nav-item.active {
+        color: white;
+      }
+      .bottom-nav .nav-icon {
+        font-size: 18px;
+        line-height: 1;
+      }
+      .nav-dot {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--red);
+        position: absolute;
+        bottom: 6px;
+        display: none;
+      }
+      .bottom-nav .nav-item.active .nav-dot {
+        display: block;
+      }
+
+      /* Overlay Sheet Animation Blueprint */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.85);
+        z-index: 200;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+        display: flex;
+        align-items: flex-end;
+      }
+      .modal-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-sheet {
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        border-radius: 20px 20px 0 0;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 24px 20px;
+        position: relative;
+        transform: translateY(100%);
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        color: #fff;
+      }
+      .modal-overlay.open .modal-sheet {
+        transform: translateY(0);
+      }
+      .modal-handle {
+        width: 40px;
+        height: 4px;
+        background: var(--border);
+        border-radius: 99px;
+        margin: -12px auto 16px;
+      }
+      .modal-x {
+        position: absolute;
+        right: 20px;
+        top: 18px;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--surface2);
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+      }
+      .modal-title {
+        font-family: var(--body);
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+    </style>
+    <link rel="stylesheet" href="theme-overrides.css" />
+    <link rel="stylesheet" href="responsive-app.css" />
+    <link rel="stylesheet" href="app-ui.css" />
+
+      <script src="pwa.js" defer></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <button
+        id="navToggle"
+        class="nav-toggle"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="sideNav"
+      >
+        <span></span><span></span><span></span>
+      </button>
+      <div class="app-header-left">
+        <p id="viewKicker">MOH Extended</p>
+        <h1 id="viewTitle">Operational Hub</h1>
+      </div>
+      <button
+        id="avatarBtn"
+        class="app-avatar"
+        aria-label="Profile"
+        onclick="Navigation.switchTab('profile')"
+      >
+        M
+      </button>
+    </header>
+
+    <main class="app-main">
+      <section id="feedbackView" class="view-panel">
+        <p class="page-subtitle">
+          Report issues, submit suggestions, and help leadership improve service
+          operations.
+        </p>
+
+        <div class="category-grid" id="feedbackCategoryGrid">
+          <div
+            class="category-card"
+            onclick="Feedback.selectCategory('Broken Item', this)"
+          >
+            <span class="category-icon">🪑</span
+            ><span class="category-label">Broken Item</span>
+          </div>
+          <div
+            class="category-card"
+            onclick="Feedback.selectCategory('Supply Low', this)"
+          >
+            <span class="category-icon">🧴</span
+            ><span class="category-label">Supply Low</span>
+          </div>
+          <div
+            class="category-card"
+            onclick="Feedback.selectCategory('Cleaning Issue', this)"
+          >
+            <span class="category-icon">🧹</span
+            ><span class="category-label">Cleaning Issue</span>
+          </div>
+          <div
+            class="category-card"
+            onclick="Feedback.selectCategory('Incident', this)"
+          >
+            <span class="category-icon">⚠️</span
+            ><span class="category-label">Incident</span>
+          </div>
+          <div
+            class="category-card"
+            onclick="Feedback.selectCategory('Suggestion', this)"
+          >
+            <span class="category-icon">💡</span
+            ><span class="category-label">Suggestion</span>
+          </div>
+          <div
+            class="category-card"
+            onclick="Feedback.selectCategory('Volunteer Concern', this)"
+          >
+            <span class="category-icon">👥</span
+            ><span class="category-label">Concern</span>
+          </div>
+          <div
+            class="category-card"
+            onclick="Feedback.selectCategory('Operational Issue', this)"
+          >
+            <span class="category-icon">🔧</span
+            ><span class="category-label">Operational</span>
+          </div>
+          <div
+            class="category-card"
+            onclick="Feedback.selectCategory('Service Review', this)"
+          >
+            <span class="category-icon">📝</span
+            ><span class="category-label">Review</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="module-num">Operational Report Logger</div>
+          <form
+            id="feedbackSubmissionForm"
+            onsubmit="Feedback.handleSubmit(event)"
+          >
+            <div class="field">
+              <label class="field-label">Category</label>
+              <div class="select-wrap">
+                <select id="formFbCategory" class="field-input" required>
+                  <option value="">Select operational category</option>
+                  <option value="Broken Item">Broken Item 🪑</option>
+                  <option value="Supply Low">Supply Low 🧴</option>
+                  <option value="Cleaning Issue">Cleaning Issue 🧹</option>
+                  <option value="Incident">Incident ⚠️</option>
+                  <option value="Suggestion">Suggestion 💡</option>
+                  <option value="Volunteer Concern">
+                    Volunteer Concern 👥
+                  </option>
+                  <option value="Operational Issue">
+                    Operational Issue 🔧
+                  </option>
+                  <option value="Service Review">Service Review 📝</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Report Title</label>
+              <input
+                id="formFbTitle"
+                class="field-input"
+                type="text"
+                required
+                placeholder="Brief summary of issue"
+              />
+            </div>
+            <div class="field">
+              <label class="field-label">Location</label>
+              <input
+                id="formFbLocation"
+                class="field-input"
+                type="text"
+                required
+                placeholder="Auditorium, Mother’s Room, Top Bathrooms, Delta Parking"
+              />
+            </div>
+            <div class="field">
+              <label class="field-label">Urgency Tier</label>
+              <div class="select-wrap">
+                <select id="formFbUrgency" class="field-input" required>
+                  <option value="Low">Low</option>
+                  <option value="Medium" selected>Medium</option>
+                  <option value="High">High</option>
+                  <option value="Critical">Critical</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Description & Assessment</label>
+              <textarea
+                id="formFbDescription"
+                class="field-input"
+                required
+                placeholder="Explain what happened clearly. Include who needs to know, where it happened, and what action may be needed."
+              ></textarea>
+            </div>
+            <button
+              class="btn-full btn-primary"
+              type="submit"
+              style="margin-bottom: 0"
+            >
+              Submit Operational Report
+            </button>
+          </form>
+        </div>
+
+        <div id="leadershipFeedbackSection" class="hidden">
+          <h3 class="section-title">Leadership Global Console</h3>
+          <div id="leadershipFeedbackList"></div>
+        </div>
+
+        <h3 class="section-title">My Submissions</h3>
+        <div id="myFeedbackSubmissionsList"></div>
+      </section>
+
+      <section id="alertsView" class="view-panel">
+        <p class="page-subtitle">
+          Requests, reminders, updates, birthdays, and ministry notices.
+        </p>
+
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+          "
+        >
+          <div
+            id="alertUnreadSummaryText"
+            class="module-num"
+            style="margin-bottom: 0; color: var(--sub)"
+          >
+            Evaluating telemetry...
+          </div>
+          <button
+            class="mini-btn"
+            style="
+              background: transparent;
+              border: none;
+              text-transform: uppercase;
+              font-size: 11px;
+            "
+            onclick="Alerts.markAllAsRead()"
+          >
+            Mark All Read
+          </button>
+        </div>
+
+        <div class="filter-row" id="alertsFilterPillsRow">
+          <button
+            class="filter-pill active"
+            onclick="Alerts.setFilter('all', this)"
+          >
+            All
+          </button>
+          <button
+            class="filter-pill"
+            onclick="Alerts.setFilter('unread', this)"
+          >
+            Unread
+          </button>
+          <button
+            class="filter-pill"
+            onclick="Alerts.setFilter('request', this)"
+          >
+            Requests
+          </button>
+          <button
+            class="filter-pill"
+            onclick="Alerts.setFilter('assignment', this)"
+          >
+            Assignments
+          </button>
+          <button
+            class="filter-pill"
+            onclick="Alerts.setFilter('academy', this)"
+          >
+            Academy
+          </button>
+          <button
+            class="filter-pill"
+            onclick="Alerts.setFilter('feedback', this)"
+          >
+            Feedback
+          </button>
+          <button
+            class="filter-pill"
+            onclick="Alerts.setFilter('birthday', this)"
+          >
+            Birthdays
+          </button>
+          <button
+            class="filter-pill"
+            onclick="Alerts.setFilter('leadership', this)"
+          >
+            Leadership
+          </button>
+          <button
+            class="filter-pill"
+            onclick="Alerts.setFilter('system', this)"
+          >
+            System
+          </button>
+        </div>
+
+        <div id="alertsMasterList"></div>
+      </section>
+
+      <section id="profileView" class="view-panel">
+        <div class="profile-hero">
+          <div id="profileHeroAvatarSlot" class="profile-hero-avatar">M</div>
+          <h2 id="profileHeroNameSlot" class="profile-hero-name">Loading...</h2>
+          <div class="profile-badge-row" id="profileHeroBadgeSlot"></div>
+        </div>
+
+        <div class="card">
+          <div class="module-num">Personnel Identity Metrics</div>
+          <div class="data-table-row">
+            <span class="data-table-label">Phone Reference</span
+            ><span class="data-table-value" id="profPhone"></span>
+          </div>
+          <div class="data-table-row">
+            <span class="data-table-label">Date of Birth</span
+            ><span class="data-table-value" id="profBday"></span>
+          </div>
+          <div class="data-table-row">
+            <span class="data-table-label">Enrollment Timestamp</span
+            ><span class="data-table-value" id="profJoined"></span>
+          </div>
+          <div class="data-table-row">
+            <span class="data-table-label">Unique System UUID</span
+            ><span
+              class="data-table-value"
+              id="profUUID"
+              style="font-family: monospace; font-size: 11px"
+            ></span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="module-num">Ecclesiastical Deployments</div>
+          <div class="data-table-row">
+            <span class="data-table-label">Division Sector</span
+            ><span class="data-table-value" id="profDivision"></span>
+          </div>
+          <div class="data-table-row">
+            <span class="data-table-label">Primary Service Assignment</span
+            ><span class="data-table-value" id="profService"></span>
+          </div>
+          <div class="data-table-row">
+            <span class="data-table-label">Assigned Cell Group</span
+            ><span class="data-table-value" id="profGroup"></span>
+          </div>
+          <div class="data-table-row">
+            <span class="data-table-label">Operational Role Placement</span
+            ><span class="data-table-value" id="profRole"></span>
+          </div>
+          <div class="data-table-row">
+            <span class="data-table-label">Clearance Structural Level</span
+            ><span
+              class="data-table-value"
+              id="profClearance"
+              style="color: var(--red)"
+            ></span>
+          </div>
+        </div>
+
+        <div class="card" id="profileAcademyMetricsCard">
+          <div class="module-num">MOH Academy Framework Verification</div>
+          <div class="data-table-row">
+            <span class="data-table-label">Active Track Matrix</span
+            ><span class="data-table-value" id="profAcadTrack"></span>
+          </div>
+          <div class="data-table-row">
+            <span class="data-table-label">Current Completion State</span
+            ><span class="data-table-value" id="profAcadStatus"></span>
+          </div>
+          <div class="data-table-row">
+            <span class="data-table-label">Track Absolute Progress</span
+            ><span class="data-table-value" id="profAcadProgress"></span>
+          </div>
+          <div class="data-table-row">
+            <span class="data-table-label">Cumulative Exam Evaluation</span
+            ><span class="data-table-value" id="profAcadScore"></span>
+          </div>
+          <div class="data-table-row">
+            <span class="data-table-label">Secure Crypt Certificate</span
+            ><span class="data-table-value" id="profAcadCert"></span>
+          </div>
+        </div>
+
+        <h3 class="section-title">Activity Snapshot</h3>
+        <div class="snapshot-matrix" style="margin-bottom: 24px">
+          <div class="snapshot-widget">
+            <div class="snapshot-widget-value" id="snapResponses">0</div>
+            <div class="snapshot-widget-label">Poll Responses</div>
+          </div>
+          <div class="snapshot-widget">
+            <div class="snapshot-widget-value" id="snapAssignments">0</div>
+            <div class="snapshot-widget-label">Duties Slotted</div>
+          </div>
+          <div class="snapshot-widget">
+            <div class="snapshot-widget-value" id="snapFeedback">0</div>
+            <div class="snapshot-widget-label">Reports Logged</div>
+          </div>
+          <div class="snapshot-widget">
+            <div class="snapshot-widget-value" id="snapAlerts">0</div>
+            <div class="snapshot-widget-label">Unread Notices</div>
+          </div>
+        </div>
+
+        <div
+          class="card"
+          style="background: transparent; border: none; padding: 0"
+        >
+          <button class="btn-full btn-ghost" onclick="Profile.openEditModal()">
+            Edit Profile Credentials
+          </button>
+          <button
+            class="btn-full btn-ghost"
+            onclick="Profile.exportSystemDataPackage()"
+          >
+            Export My Personal Data Package
+          </button>
+          <button
+            class="btn-full btn-danger"
+            onclick="Profile.purgeLocalCollections()"
+          >
+            Clear Local Data Collections
+          </button>
+          <button
+            class="btn-full btn-primary"
+            style="margin-bottom: 0"
+            onclick="Profile.terminateActiveSession()"
+          >
+            Log Out Session
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <div id="navScrim" class="nav-scrim"></div>
+    <aside id="sideNav" class="side-nav" aria-label="Main navigation">
+      <div class="side-nav-head">
+        <img
+          src="assets/images/crc-logo.jpg"
+          alt="CRC"
+          class="sn-logo"
+          onerror="this.style.display='none'"
+        />
+        <div class="sn-meta">
+          <div class="sn-title">CRC MOH OS</div>
+          <div class="sn-sub">Operational Hub</div>
+        </div>
+      </div>
+      <div class="side-nav-user" onclick="Navigation.switchTab('profile')">
+        <div class="snu-av" id="snuAvatar">M</div>
+        <div style="min-width:0;">
+          <div class="snu-name" id="snuName">Member</div>
+          <div class="snu-role" id="snuRole">Ministry of Helps</div>
+        </div>
+      </div>
+      <div class="side-nav-scroll">
+        <nav id="bottomNav" class="side-nav-list"></nav>
+      </div>
+      <div class="side-nav-foot">
+        <a class="btn-full btn-ghost" href="index.html" style="display:block;text-align:center;text-decoration:none;">Back to App</a>
+        <div class="sn-version">CRC MOH OS · v11</div>
+      </div>
+    </aside>
+
+    <div id="profileEditModalOverlay" class="modal-overlay">
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <button class="modal-x" onclick="Profile.closeEditModal()">×</button>
+        <h3 class="modal-title">Edit Profile Credentials</h3>
+        <form id="profileMutationForm" onsubmit="Profile.saveMutations(event)">
+          <div class="field">
+            <label class="field-label">First Name</label>
+            <input id="editFormName" class="field-input" type="text" required />
+          </div>
+          <div class="field">
+            <label class="field-label">Surname</label>
+            <input
+              id="editFormSurname"
+              class="field-input"
+              type="text"
+              required
+            />
+          </div>
+          <div class="field">
+            <label class="field-label">Phone Reference</label>
+            <input
+              id="editFormPhone"
+              class="field-input"
+              type="text"
+              required
+            />
+          </div>
+          <div class="field">
+            <label class="field-label">Date of Birth</label>
+            <input id="editFormBday" class="field-input" type="date" required />
+          </div>
+          <div class="field">
+            <label class="field-label"
+              >Profile Image Data URL (Base64) / Image Link</label
+            >
+            <textarea
+              id="editFormImage"
+              class="field-input"
+              placeholder="Paste Base64 URI string or secure graphic location asset link"
+            ></textarea>
+          </div>
+          <button
+            class="btn-full btn-primary"
+            type="submit"
+            style="margin-top: 10px; margin-bottom: 0"
+          >
+            Commit Record Modifications
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script src="bridge.js"></script>
+    <script>
+      // Constants mapping engine parameters
+      const ROLE_LABELS = {
+        trainee: "Trainee Personnel",
+        volunteer: "Standard Volunteer",
+        group_leader: "Group Leader",
+        area_leader: "Area Leader",
+        service_leader: "Service Leader",
+        ministry_leader: "Ministry Leader",
+        pastor: "Ministry Pastor",
+      };
+
+      const SCALE_CLEARANCE = {
+        trainee: "T1 Clearance — Trainee",
+        volunteer: "T2 Clearance — Volunteer",
+        group_leader: "T3 Clearance — Group Leader",
+        area_leader: "T4 Clearance — Area Leader",
+        service_leader: "T5 Clearance — Service Leader",
+        ministry_leader: "T6 Clearance — Ministry Leader",
+        pastor: "T7 Clearance — Pastor",
+      };
+
+      const FEEDBACK_ICONS = {
+        "Broken Item": "🪑",
+        "Supply Low": "🧴",
+        "Cleaning Issue": "🧹",
+        Incident: "⚠️",
+        Suggestion: "💡",
+        "Volunteer Concern": "👥",
+        "Operational Issue": "🔧",
+        "Service Review": "📝",
+      };
+
+      const ALERT_ICONS = {
+        request: "📋",
+        response: "✅",
+        assignment: "📍",
+        academy: "🎓",
+        feedback: "📝",
+        birthday: "🎉",
+        system: "⚙️",
+        leadership: "🧭",
+      };
+
+      let currentUser = null;
+
+      // Operational Core Initialization Routine
+      document.addEventListener("DOMContentLoaded", function () {
+        // 5. Data Access Helpers & State Resolution Pipeline
+        currentUser = getCurrentUser();
+
+        if (!currentUser) {
+          window.location.href = "index.html";
+          return;
+        }
+
+        // Populate placeholder structural metrics inside collections arrays
+        if (getArray("mohFeedback").length === 0) saveArray("mohFeedback", []);
+        if (getArray("mohAlerts").length === 0) saveArray("mohAlerts", []);
+        if (getArray("mohAssignments").length === 0)
+          saveArray("mohAssignments", []);
+        if (getArray("mohResponses").length === 0)
+          saveArray("mohResponses", []);
+
+        // Fire asynchronous background calculations
+        generateSystemAlerts();
+
+        // Enforce rendering cycle mapping tracking active states
+        Navigation.init();
+        Feedback.init();
+        Alerts.init();
+        Profile.init();
+      });
+
+      // ================= HELPER FUNCTIONS =================
+      function getCurrentUser() {
+        return (
+          JSON.parse(localStorage.getItem("currentUser")) ||
+          JSON.parse(localStorage.getItem("crc_moh_current_user")) ||
+          JSON.parse(localStorage.getItem("crc_moh_user"))
+        );
+      }
+
+      function saveCurrentUser(user) {
+        localStorage.setItem("currentUser", JSON.stringify(user));
+        localStorage.setItem("crc_moh_current_user", JSON.stringify(user));
+      }
+
+      function getArray(key) {
+        // Direct integration binding reading fallback metrics keys
+        const fallbackMapping = {
+          mohFeedback: "crc_moh_feedback",
+          mohAlerts: "crc_moh_alerts",
+          mohAssignments: "crc_moh_assignments",
+          mohResponses: "crc_moh_responses",
+        };
+
+        let data = localStorage.getItem(key);
+        if (!data && fallbackMapping[key]) {
+          data = localStorage.getItem(fallbackMapping[key]);
+        }
+        return JSON.parse(data) || [];
+      }
+
+      function saveArray(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+      }
+
+      function createAlert({ title, message, type, priority, userId }) {
+        const alerts = getArray("mohAlerts");
+        alerts.unshift({
+          id: crypto.randomUUID(),
+          title,
+          message,
+          type,
+          priority,
+          userId: userId || currentUser.id,
+          read: false,
+          createdAt: new Date().toISOString(),
+        });
+        saveArray("mohAlerts", alerts);
+      }
+
+      // ================= ENGINE: NAVIGATION MANIFEST =================
+      const Navigation = {
+        activeTab: "feedback",
+
+        init() {
+          const role = currentUser.role;
+          const isLeader = [
+            "group_leader",
+            "area_leader",
+            "service_leader",
+            "ministry_leader",
+            "pastor",
+          ].includes(role);
+          const navContainer = document.getElementById("bottomNav");
+
+          // Dynamically append menu tabs aligned explicitly with briefing guidelines
+          let itemsHTML = `
+          <div class="nav-group-label">Serving</div>
+          <a href="index.html#dashboard" class="nav-item">
+            <span class="nav-icon">\u2302</span><span class="nav-label">Dashboard</span>
+          </a>
+          <a href="index.html#academy" class="nav-item">
+            <span class="nav-icon">\u25C8</span><span class="nav-label">Academy</span>
+          </a>
+          <a href="index.html#guide" class="nav-item">
+            <span class="nav-icon">\u2630</span><span class="nav-label">Guide</span>
+          </a>
+          <div class="nav-group-label">This Console</div>
+          <button class="nav-item" id="navLink_feedback" onclick="Navigation.switchTab('feedback')">
+            <span class="nav-icon">\u270E</span><span class="nav-label">Feedback</span>
+          </button>
+          <button class="nav-item" id="navLink_alerts" onclick="Navigation.switchTab('alerts')">
+            <span class="nav-icon">\u25CC</span><span class="nav-label">Alerts</span>
+          </button>
+        `;
+
+          if (isLeader) {
+            itemsHTML += `
+            <div class="nav-group-label">Leadership</div>
+            <a href="leadership.html" class="nav-item" id="navLink_leadership">
+              <span class="nav-icon">\u25CE</span><span class="nav-label">Command Centre</span>
+            </a>
+          `;
+          }
+
+          itemsHTML += `
+          <div class="nav-group-label">Account</div>
+          <button class="nav-item" id="navLink_profile" onclick="Navigation.switchTab('profile')">
+            <span class="nav-icon">\u25C9</span><span class="nav-label">My Profile</span>
+          </button>
+        `;
+
+          navContainer.innerHTML = itemsHTML;
+          this.bindNavChrome();
+          this.renderIdentity();
+          const requestedTab = (window.location.hash || "").replace("#", "");
+          this.switchTab(["feedback", "alerts", "profile"].includes(requestedTab) ? requestedTab : "feedback");
+        },
+
+        // BUG FIX: the header avatar was hardcoded to "M" and never populated,
+        // and the drawer identity block needs the same data.
+        renderIdentity() {
+          const u = currentUser || {};
+          const n = String(u.name || "").trim();
+          const sn = String(u.surname || "").trim();
+          const initials =
+            ((n ? n[0] : "") + (sn ? sn[0] : "") || "M").toUpperCase();
+          const img = u.profileImage
+            ? `<img src="${u.profileImage}" alt="">`
+            : initials;
+
+          const avatarEl = document.getElementById("avatarBtn");
+          if (avatarEl) avatarEl.innerHTML = img;
+
+          const av = document.getElementById("snuAvatar");
+          const nm = document.getElementById("snuName");
+          const rl = document.getElementById("snuRole");
+          if (av) av.innerHTML = img;
+          if (nm) nm.textContent = `${n} ${sn}`.trim() || "Member";
+          if (rl) {
+            const label =
+              (typeof ROLE_LABELS !== "undefined" && ROLE_LABELS[u.role]) ||
+              u.role ||
+              "Ministry of Helps";
+            rl.textContent = `${label} \u00B7 ${u.groupId || "No group"}`;
+          }
+        },
+
+        setNavOpen(open) {
+          const nav = document.getElementById("sideNav");
+          const scrim = document.getElementById("navScrim");
+          const toggle = document.getElementById("navToggle");
+          if (!nav || !scrim || !toggle) return;
+          nav.classList.toggle("open", open);
+          scrim.classList.toggle("open", open);
+          toggle.classList.toggle("is-open", open);
+          toggle.setAttribute("aria-expanded", open ? "true" : "false");
+          document.body.classList.toggle("nav-open", open);
+        },
+
+        bindNavChrome() {
+          const toggle = document.getElementById("navToggle");
+          const scrim = document.getElementById("navScrim");
+          if (!toggle || toggle.dataset.bound) return;
+          toggle.dataset.bound = "1";
+          toggle.onclick = () =>
+            this.setNavOpen(
+              !document.getElementById("sideNav").classList.contains("open"),
+            );
+          scrim.onclick = () => this.setNavOpen(false);
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") this.setNavOpen(false);
+          });
+        },
+
+        switchTab(tabId) {
+          this.activeTab = tabId;
+
+          // Handle visual view switching
+          document
+            .querySelectorAll(".view-panel")
+            .forEach((p) => p.classList.remove("active"));
+          document.getElementById(`${tabId}View`).classList.add("active");
+
+          // Handle navigation states
+          document
+            .querySelectorAll("#bottomNav .nav-item")
+            .forEach((item) => item.classList.remove("active"));
+          const activeLink = document.getElementById(`navLink_${tabId}`);
+          if (activeLink) activeLink.classList.add("active");
+
+          // Close the drawer after a selection on mobile.
+          if (!window.matchMedia("(min-width: 1024px)").matches)
+            this.setNavOpen(false);
+
+          // Adapt Shell Header Titles
+          const titleEl = document.getElementById("viewTitle");
+          const kickerEl = document.getElementById("viewKicker");
+
+          if (tabId === "feedback") {
+            titleEl.textContent = "Feedback Console";
+            kickerEl.textContent = "Operations Log";
+          }
+          if (tabId === "alerts") {
+            titleEl.textContent = "Alerts Center";
+            kickerEl.textContent = "Telemetry Notification";
+          }
+          if (tabId === "profile") {
+            titleEl.textContent = "Personnel File";
+            kickerEl.textContent = "MOH Security ID";
+          }
+
+          // Core re-rendering loop invocation mapping to ensure clean datasets
+          if (tabId === "feedback") Feedback.renderLists();
+          if (tabId === "alerts") Alerts.renderList();
+          if (tabId === "profile") Profile.refreshData();
+        },
+      };
+
+      // ================= ENGINE: FEEDBACK OPERATIONS =================
+      const Feedback = {
+        selectedCategory: "",
+
+        init() {
+          const role = currentUser.role;
+          const isLeader = [
+            "group_leader",
+            "area_leader",
+            "service_leader",
+            "ministry_leader",
+            "pastor",
+          ].includes(role);
+
+          if (isLeader) {
+            document
+              .getElementById("leadershipFeedbackSection")
+              .classList.remove("hidden");
+          }
+          this.renderLists();
+        },
+
+        selectCategory(catName, cardEl) {
+          this.selectedCategory = catName;
+          document.getElementById("formFbCategory").value = catName;
+
+          document
+            .querySelectorAll(".category-card")
+            .forEach((c) => c.classList.remove("selected"));
+          if (cardEl) cardEl.classList.add("selected");
+        },
+
+        handleSubmit(e) {
+          e.preventDefault();
+
+          const feedbackArray = getArray("mohFeedback");
+          const payload = {
+            id: crypto.randomUUID(),
+            category: document.getElementById("formFbCategory").value,
+            title: document.getElementById("formFbTitle").value,
+            location: document.getElementById("formFbLocation").value,
+            urgency: document.getElementById("formFbUrgency").value,
+            description: document.getElementById("formFbDescription").value,
+            submittedById: currentUser.id,
+            submittedByName: currentUser.name + " " + currentUser.surname,
+            groupId: currentUser.group || currentUser.groupId || "Unassigned",
+            division: currentUser.division || "General",
+            service:
+              currentUser.service || currentUser.primaryService || "General",
+            status: "Open",
+            createdAt: new Date().toISOString(),
+          };
+
+          feedbackArray.unshift(payload);
+          saveArray("mohFeedback", feedbackArray);
+
+          // System notification trigger mapping
+          createAlert({
+            title: "Feedback Submitted",
+            message: `Your operational feedback regarding "${payload.title}" has been saved and marked as Open.`,
+            type: "feedback",
+            priority: "info",
+            userId: currentUser.id,
+          });
+
+          // Form clearing layout resets
+          document.getElementById("feedbackSubmissionForm").reset();
+          document
+            .querySelectorAll(".category-card")
+            .forEach((c) => c.classList.remove("selected"));
+          this.selectedCategory = "";
+
+          this.renderLists();
+          alert(
+            "Operational log updated successfully. Telemetry parsed to infrastructure channels.",
+          );
+        },
+
+        mutateStatus(id, newStatus) {
+          const feedbackArray = getArray("mohFeedback");
+          const idx = feedbackArray.findIndex((item) => item.id === id);
+          if (idx !== -1) {
+            feedbackArray[idx].status = newStatus;
+            saveArray("mohFeedback", feedbackArray);
+
+            // Alert target telemetry trigger
+            createAlert({
+              title: `Report Marked as ${newStatus}`,
+              message: `The ticket item "${feedbackArray[idx].title}" status matrix was shifted to ${newStatus}.`,
+              type: "leadership",
+              priority: "info",
+              userId: feedbackArray[idx].submittedById,
+            });
+
+            this.renderLists();
+          }
+        },
+
+        renderLists() {
+          const allFeedback = getArray("mohFeedback");
+          const mySubmissionsContainer = document.getElementById(
+            "myFeedbackSubmissionsList",
+          );
+          const leadershipContainer = document.getElementById(
+            "leadershipFeedbackList",
+          );
+
+          // Filter Down Personal Collection Records
+          const personalRecords = allFeedback.filter(
+            (f) => f.submittedById === currentUser.id,
+          );
+
+          // Generate User Display HTML
+          if (personalRecords.length === 0) {
+            mySubmissionsContainer.innerHTML = `
+            <div class="empty-state">
+              <span class="empty-state-icon">📝</span>
+              <p class="empty-state-text">No feedback submitted yet.<br>When you report something, it will appear here.</p>
+            </div>`;
+          } else {
+            mySubmissionsContainer.innerHTML = personalRecords
+              .map((f) => {
+                let statusClass = "badge-open";
+                if (f.status === "In Review") statusClass = "badge-review";
+                if (f.status === "Resolved") statusClass = "badge-resolved";
+
+                let urgencyClass = "badge-info";
+                if (f.urgency === "High") urgencyClass = "badge-warning";
+                if (f.urgency === "Critical") urgencyClass = "badge-critical";
+
+                return `
+              <div class="card">
+                <div>
+                  <span class="badge ${statusClass}">${f.status}</span>
+                  <span class="badge ${urgencyClass}">${f.urgency}</span>
+                  <span style="font-size:18px; font-weight:700; display:block; margin-top:8px;">${FEEDBACK_ICONS[f.category] || "📋"} ${f.title}</span>
+                </div>
+                <p class="field-note" style="margin-top:8px; color:#fff;">${f.description}</p>
+                <div class="feedback-meta-line">
+                  <span>Location: <b>${f.location}</b></span>
+                  <span>Logged: <b>${new Date(f.createdAt).toLocaleDateString()}</b></span>
+                  <span>Category: <b>${f.category}</b></span>
+                </div>
+              </div>`;
+              })
+              .join("");
+          }
+
+          // Generate Leadership Dashboard Core Viewport
+          const role = currentUser.role;
+          const isLeader = [
+            "group_leader",
+            "area_leader",
+            "service_leader",
+            "ministry_leader",
+            "pastor",
+          ].includes(role);
+          if (isLeader && leadershipContainer) {
+            if (allFeedback.length === 0) {
+              leadershipContainer.innerHTML = `<div class="empty-state"><p class="empty-state-text">Global ledger empty. No operational feedback found across network pipelines.</p></div>`;
+            } else {
+              leadershipContainer.innerHTML = allFeedback
+                .map((f) => {
+                  let statusClass = "badge-open";
+                  if (f.status === "In Review") statusClass = "badge-review";
+                  if (f.status === "Resolved") statusClass = "badge-resolved";
+
+                  let urgencyClass = "badge-info";
+                  if (f.urgency === "High") urgencyClass = "badge-warning";
+                  if (f.urgency === "Critical") urgencyClass = "badge-critical";
+
+                  return `
+                <div class="card" style="border-top: 2px solid var(--red);">
+                  <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                      <span class="badge ${statusClass}">${f.status}</span>
+                      <span class="badge ${urgencyClass}">${f.urgency}</span>
+                    </div>
+                    <div class="module-num" style="text-align:right;">Group ${f.groupId}</div>
+                  </div>
+                  <h4 style="font-size:16px; margin:8px 0 4px;">${FEEDBACK_ICONS[f.category] || "📋"} ${f.title}</h4>
+                  <p class="field-note" style="color:#fff; margin-bottom:10px;">${f.description}</p>
+                  
+                  <div class="feedback-meta-line" style="margin-bottom:12px;">
+                    <span>By: <b>${f.submittedByName}</b></span>
+                    <span>Svc: <b>${f.service}</b></span>
+                    <span>Sector: <b>${f.division}</b></span>
+                    <span>Loc: <b>${f.location}</b></span>
+                  </div>
+                  
+                  <div class="no-print">
+                    <button class="btn-full btn-ghost btn-small" onclick="Feedback.mutateStatus('${f.id}', 'In Review')">Mark In Review</button>
+                    <button class="btn-full btn-primary btn-small" style="background:var(--green);" onclick="Feedback.mutateStatus('${f.id}', 'Resolved')">Mark Resolved</button>
+                  </div>
+                </div>`;
+                })
+                .join("");
+            }
+          }
+        },
+      };
+
+      // ================= ENGINE: ALERTS FRAMEWORK =================
+      const Alerts = {
+        activeFilter: "all",
+
+        init() {
+          this.renderList();
+        },
+
+        setFilter(filterType, pillEl) {
+          this.activeFilter = filterType;
+          document
+            .querySelectorAll("#alertsFilterPillsRow .filter-pill")
+            .forEach((p) => p.classList.remove("active"));
+          if (pillEl) pillEl.classList.add("active");
+          this.renderList();
+        },
+
+        markAsRead(id) {
+          const alerts = getArray("mohAlerts");
+          const idx = alerts.findIndex((a) => a.id === id);
+          if (idx !== -1) {
+            alerts[idx].read = true;
+            saveArray("mohAlerts", alerts);
+            this.renderList();
+            Profile.refreshData();
+          }
+        },
+
+        markAllAsRead() {
+          const alerts = getArray("mohAlerts");
+          alerts.forEach((a) => {
+            if (a.userId === currentUser.id || !a.userId) a.read = true;
+          });
+          saveArray("mohAlerts", alerts);
+          this.renderList();
+          Profile.refreshData();
+        },
+
+        renderList() {
+          const allAlerts = getArray("mohAlerts");
+          const container = document.getElementById("alertsMasterList");
+
+          // Target matching explicitly filtered contextual subsets scoped strictly to target identity context
+          const contextScopedAlerts = allAlerts.filter(
+            (a) => a.userId === currentUser.id || !a.userId,
+          );
+
+          let filtered = contextScopedAlerts;
+          if (this.activeFilter === "unread")
+            filtered = contextScopedAlerts.filter((a) => !a.read);
+          else if (this.activeFilter !== "all")
+            filtered = contextScopedAlerts.filter(
+              (a) => a.type === this.activeFilter,
+            );
+
+          // Render target elements tracking metrics bounds updates
+          const unreadCount = contextScopedAlerts.filter((a) => !a.read).length;
+          document.getElementById("alertUnreadSummaryText").textContent =
+            `${unreadCount} Unread Notifications Pending`;
+
+          if (filtered.length === 0) {
+            container.innerHTML = `
+            <div class="empty-state">
+              <span class="empty-state-icon">◌</span>
+              <p class="empty-state-text">No alerts yet.<br>You are up to date.</p>
+            </div>`;
+            return;
+          }
+
+          container.innerHTML = filtered
+            .map((a) => {
+              let priorityClass = "badge-info";
+              if (a.priority === "warning") priorityClass = "badge-warning";
+              if (a.priority === "critical") priorityClass = "badge-critical";
+
+              return `
+            <div class="card alert-card ${!a.read ? "unread" : ""}">
+              ${!a.read ? '<div class="alert-dot"></div>' : ""}
+              <div class="alert-avatar-box">${ALERT_ICONS[a.type] || "⚙️"}</div>
+              <div class="alert-body-content">
+                <div style="margin-bottom:4px;">
+                  <span class="badge ${priorityClass}">${a.priority}</span>
+                  <span class="badge" style="background:var(--surface2); color:var(--sub);">${a.type}</span>
+                </div>
+                <h4>${a.title}</h4>
+                <p>${a.message}</p>
+                <span class="alert-timestamp">${new Date(a.createdAt).toLocaleString()}</span>
+                
+                ${
+                  !a.read
+                    ? `
+                  <div class="alert-actions-panel no-print">
+                    <button class="btn-full btn-primary btn-small" onclick="Alerts.markAsRead('${a.id}')">Mark Read</button>
+                  </div>`
+                    : ""
+                }
+              </div>
+            </div>`;
+            })
+            .join("");
+        },
+      };
+
+      // Asynchronous notification payload validation pipeline parsing guidelines constraints loop
+      function generateSystemAlerts() {
+        const alerts = getArray("mohAlerts");
+        const todayString = new Date().toISOString().split("T")[0];
+
+        // Automated Sequence Check A: Birthdays Context Verification
+        if (currentUser.birthday) {
+          const cBday = currentUser.birthday.split("-");
+          const tDate = new Date();
+          // Normalizing date formats to cross-check structural equivalence arrays matching metrics tracking
+          if (
+            parseInt(cBday[1]) === tDate.getMonth() + 1 &&
+            parseInt(cBday[2]) === tDate.getDate()
+          ) {
+            const bdayTitle = `Happy Birthday ${currentUser.name} 🎉`;
+            const exists = alerts.some(
+              (a) => a.title === bdayTitle && a.userId === currentUser.id,
+            );
+            if (!exists) {
+              createAlert({
+                title: bdayTitle,
+                message:
+                  "Your MOH family celebrates you today. Thank you for serving with high-tier excellence.",
+                type: "birthday",
+                priority: "info",
+                userId: currentUser.id,
+              });
+            }
+          }
+        }
+
+        // Automated Sequence Check B: Core Field Incompleteness Assertions Matrix
+        if (
+          !currentUser.phone ||
+          !currentUser.birthday ||
+          !currentUser.division ||
+          !currentUser.primaryService
+        ) {
+          const incompleteTitle = "Complete your profile";
+          const exists = alerts.some(
+            (a) => a.title === incompleteTitle && a.userId === currentUser.id,
+          );
+          if (!exists) {
+            createAlert({
+              title: incompleteTitle,
+              message:
+                "Some vital structural profile tracking variables are missing inside system directories. Rectify profile metadata logs immediately.",
+              type: "system",
+              priority: "warning",
+              userId: currentUser.id,
+            });
+          }
+        }
+
+        // Automated Sequence Check C: Hostess Track Verification
+        if (currentUser.division === "hostess") {
+          const trackState = currentUser.academy
+            ? currentUser.academy.status
+            : "in_progress";
+          if (trackState !== "certified") {
+            const acadTitle = "Academy in progress";
+            const exists = alerts.some(
+              (a) => a.title === acadTitle && a.userId === currentUser.id,
+            );
+            if (!exists) {
+              createAlert({
+                title: acadTitle,
+                message:
+                  "Continue your Hostess Academy certification module flows. Verify clearance standards manually before live service sequences.",
+                type: "academy",
+                priority: "info",
+                userId: currentUser.id,
+              });
+            }
+          }
+        }
+
+        // Automated Sequence Check D: Unresolved Core Tickets Pipeline Tracking Loops
+        const openFeedbackItems = getArray("mohFeedback").filter(
+          (f) => f.submittedById === currentUser.id && f.status === "Open",
+        );
+        if (openFeedbackItems.length > 0) {
+          const feedbackAlertTitle = "Feedback still open";
+          const exists = alerts.some(
+            (a) =>
+              a.title === feedbackAlertTitle && a.userId === currentUser.id,
+          );
+          if (!exists) {
+            createAlert({
+              title: feedbackAlertTitle,
+              message: `You currently track ${openFeedbackItems.length} operational logs cataloged under Open deployment vectors. Leadership is evaluating data points.`,
+              type: "feedback",
+              priority: "info",
+              userId: currentUser.id,
+            });
+          }
+        }
+      }
+
+      // ================= ENGINE: PROFILE OPERATIONS =================
+      const Profile = {
+        init() {
+          this.refreshData();
+        },
+
+        refreshData() {
+          // Enforce synchronization matching session tokens parameters
+          currentUser = getCurrentUser();
+
+          // Setup initials fallback calculation models
+          const initials =
+            (currentUser.name ? currentUser.name[0] : "M") +
+            (currentUser.surname ? currentUser.surname[0] : "H");
+          const avatarSlot = document.getElementById("profileHeroAvatarSlot");
+
+          if (currentUser.profileImage) {
+            avatarSlot.innerHTML = `<img src="${currentUser.profileImage}">`;
+          } else {
+            avatarSlot.innerHTML = initials.toUpperCase();
+          }
+
+          document.getElementById("profileHeroNameSlot").textContent =
+            `${currentUser.name} ${currentUser.surname}`;
+
+          // Render Identity Tag Array
+          document.getElementById("profileHeroBadgeSlot").innerHTML = `
+          <span class="profile-badge-tag role-accent">${ROLE_LABELS[currentUser.role] || currentUser.role}</span>
+          <span class="profile-badge-tag">Group ${currentUser.group || currentUser.groupId || "Unassigned"}</span>
+          <span class="profile-badge-tag" style="text-transform: uppercase;">${currentUser.division || "Unassigned"}</span>
+        `;
+
+          // Map Structural Text Metrics
+          document.getElementById("profPhone").textContent =
+            currentUser.phone || "Missing Field Data";
+          document.getElementById("profBday").textContent =
+            currentUser.birthday || "Missing Field Data";
+          document.getElementById("profJoined").textContent =
+            currentUser.joinedDate || "2026-01-15 (Cached Ledger)";
+          document.getElementById("profUUID").textContent =
+            currentUser.id || "N/A";
+
+          document.getElementById("profDivision").textContent = (
+            currentUser.division || "Unassigned"
+          ).toUpperCase();
+          document.getElementById("profService").textContent =
+            currentUser.service || currentUser.primaryService || "Unassigned";
+          document.getElementById("profGroup").textContent =
+            `Group ${currentUser.group || currentUser.groupId || "Unassigned"}`;
+          document.getElementById("profRole").textContent =
+            ROLE_LABELS[currentUser.role] || currentUser.role;
+          document.getElementById("profClearance").textContent =
+            SCALE_CLEARANCE[currentUser.role] || "T1 Clearance";
+
+          // Map Academy Framework Components Blocks Visual Layouts
+          const acadCard = document.getElementById("profileAcademyMetricsCard");
+          if (currentUser.division === "hostess") {
+            document.getElementById("profAcadTrack").textContent =
+              "Ecclesiastical Hostess Academy Track V1";
+
+            const aState = currentUser.academy
+              ? currentUser.academy.status
+              : "in_progress";
+            let statusString = "In Progress";
+            if (aState === "ready_for_final")
+              statusString = "Eligible for Graduation Assessment";
+            if (aState === "certified")
+              statusString = "Certified Graduate Track Holder";
+
+            document.getElementById("profAcadStatus").textContent =
+              statusString;
+            document.getElementById("profAcadProgress").textContent =
+              `${currentUser.academy ? currentUser.academy.progress : 0}% Absolute Completion`;
+            document.getElementById("profAcadScore").textContent =
+              currentUser.academy && currentUser.academy.finalExamScore
+                ? `${currentUser.academy.finalExamScore}% Evaluation Rating`
+                : "Awaiting Examination Logs";
+            document.getElementById("profAcadCert").textContent =
+              aState === "certified"
+                ? "Crypt Verified — Secure Local Asset Download Bound"
+                : "Ineligible for Document Verification";
+          } else {
+            document.getElementById("profAcadTrack").textContent =
+              "Usher Structural Academy Track Platform";
+            document.getElementById("profAcadStatus").textContent =
+              "Engineering Construction Blueprint Pipeline Stage";
+            document.getElementById("profAcadProgress").textContent =
+              "0% Framework Integration Bounds";
+            document.getElementById("profAcadScore").textContent =
+              "Syllabus Integration Pending Release Lifecycle";
+            document.getElementById("profAcadCert").textContent =
+              "System Coming Soon";
+          }
+
+          // Dynamically compute statistical aggregates straight out of native local files arrays
+          document.getElementById("snapResponses").textContent =
+            getArray("mohResponses").length;
+          document.getElementById("snapAssignments").textContent =
+            getArray("mohAssignments").length;
+          document.getElementById("snapFeedback").textContent = getArray(
+            "mohFeedback",
+          ).filter((f) => f.submittedById === currentUser.id).length;
+          document.getElementById("snapAlerts").textContent = getArray(
+            "mohAlerts",
+          ).filter(
+            (a) => (a.userId === currentUser.id || !a.userId) && !a.read,
+          ).length;
+        },
+
+        openEditModal() {
+          document.getElementById("editFormName").value =
+            currentUser.name || "";
+          document.getElementById("editFormSurname").value =
+            currentUser.surname || "";
+          document.getElementById("editFormPhone").value =
+            currentUser.phone || "";
+          document.getElementById("editFormBday").value =
+            currentUser.birthday || "";
+          document.getElementById("editFormImage").value =
+            currentUser.profileImage || "";
+
+          document
+            .getElementById("profileEditModalOverlay")
+            .classList.add("open");
+        },
+
+        closeEditModal() {
+          document
+            .getElementById("profileEditModalOverlay")
+            .classList.remove("open");
+        },
+
+        saveMutations(e) {
+          e.preventDefault();
+
+          currentUser.name = document.getElementById("editFormName").value;
+          currentUser.surname =
+            document.getElementById("editFormSurname").value;
+          currentUser.phone = document.getElementById("editFormPhone").value;
+          currentUser.birthday = document.getElementById("editFormBday").value;
+          currentUser.profileImage =
+            document.getElementById("editFormImage").value;
+
+          saveCurrentUser(currentUser);
+
+          // Sync record back to global users database registry if mapping matches
+          const totalUsers = JSON.parse(
+            localStorage.getItem("moh_users") || "[]",
+          );
+          const matchIdx = totalUsers.findIndex((u) => u.id === currentUser.id);
+          if (matchIdx !== -1) {
+            totalUsers[matchIdx] = currentUser;
+            localStorage.setItem("moh_users", JSON.stringify(totalUsers));
+          }
+
+          this.closeEditModal();
+          this.refreshData();
+
+          createAlert({
+            title: "Profile Config Updated",
+            message:
+              "Your personnel profile metadata record bounds were successfully modified within local runtime nodes.",
+            type: "system",
+            priority: "info",
+            userId: currentUser.id,
+          });
+
+          alert("Personnel file encryption block updated seamlessly.");
+        },
+
+        exportSystemDataPackage() {
+          const dataPackage = {
+            user: currentUser,
+            feedback: getArray("mohFeedback").filter(
+              (f) => f.submittedById === currentUser.id,
+            ),
+            alerts: getArray("mohAlerts").filter(
+              (a) => a.userId === currentUser.id || !a.userId,
+            ),
+            assignments: getArray("mohAssignments").filter(
+              (a) => a.assignedToUserId === currentUser.id,
+            ),
+            responses: getArray("mohResponses").filter(
+              (r) => r.userId === currentUser.id,
+            ),
+          };
+
+          const jsonString =
+            "data:text/json;charset=utf-8," +
+            encodeURIComponent(JSON.stringify(dataPackage, null, 2));
+          const anchorNode = document.createElement("a");
+          anchorNode.setAttribute("href", jsonString);
+          anchorNode.setAttribute(
+            "download",
+            `moh-profile-export-${currentUser.id}.json`,
+          );
+          document.body.appendChild(anchorNode);
+          anchorNode.click();
+          anchorNode.remove();
+        },
+
+        purgeLocalCollections() {
+          if (
+            confirm(
+              "Are you critically confident regarding this operation pipeline reset request? This step clears all local tracking arrays (Feedback, Alerts, Assignments, Responses) inside mock sandbox caches instantly.",
+            )
+          ) {
+            localStorage.removeItem("mohFeedback");
+            localStorage.removeItem("mohAlerts");
+            localStorage.removeItem("mohAssignments");
+            localStorage.removeItem("mohResponses");
+
+            localStorage.removeItem("crc_moh_feedback");
+            localStorage.removeItem("crc_moh_alerts");
+            localStorage.removeItem("crc_moh_assignments");
+            localStorage.removeItem("crc_moh_responses");
+
+            saveArray("mohFeedback", []);
+            saveArray("mohAlerts", []);
+            saveArray("mohAssignments", []);
+            saveArray("mohResponses", []);
+
+            this.refreshData();
+            alert(
+              "Mock collections collection cleared cleanly. Local registry recycled back to initial state baseline.",
+            );
+            Navigation.switchTab("profile");
+          }
+        },
+
+        terminateActiveSession() {
+          localStorage.removeItem("currentUser");
+          localStorage.removeItem("crc_moh_current_user");
+          localStorage.removeItem("crc_moh_user");
+          localStorage.removeItem("moh_user_session");
+          localStorage.removeItem("crc_moh_user_v2");
+
+          window.location.href = "index.html";
+        },
+      };
+    </script>
+  </body>
+</html>
