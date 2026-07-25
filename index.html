@@ -1876,7 +1876,7 @@
             trainee: { division: 1, service: 1, group: 1, area: 0, teams: 0 },
             volunteer: { division: 1, service: 1, group: 1, area: 0, teams: 0 },
             group_leader: { division: 1, service: 1, group: 1, area: 0, teams: 0 },
-            area_leader: { division: 1, service: 1, group: 0, area: 1, teams: 1 },
+            area_leader: { division: 1, service: 1, group: 0, area: 0, teams: 0 },
             service_leader: { division: 1, service: 1, group: 0, area: 0, teams: 0 },
             ministry_leader: { division: 1, service: 0, group: 0, area: 0, teams: 0 },
             pastor: { division: 0, service: 0, group: 0, area: 0, teams: 0 },
@@ -1891,7 +1891,7 @@
             volunteer: "Volunteers serve within a group each Sunday.",
             group_leader: "Group leaders lead one group and assign its duties.",
             area_leader:
-              "Area leaders oversee an area covering several groups \u2014 no single group needed.",
+              "Your service leader assigns which area you cover after you sign up \u2014 no need to pick one now.",
             service_leader:
               "Service leaders oversee an entire AM or PM service \u2014 no division or group needed.",
             ministry_leader:
@@ -2439,10 +2439,18 @@
               { group: "Leadership", key: "notices", icon: "\u25A3", label: "Send Notice" },
               { group: "Leadership", key: "pollresults", icon: "\u2263", label: "Poll Results" },
               { group: "Leadership", key: "team", icon: "\u25A6", label: "Team" },
-              { group: "Leadership", key: "assign", icon: "\uFF0B", label: "Assign Duties" },
-              { group: "Leadership", key: "leadership", icon: "\u25CE", label: "Command Centre" },
             );
+            // Assigning duties is a group leader's job specifically \u2014 area,
+            // service and ministry leaders operate a level above individual
+            // duty rosters (they set areas, run stats, send notices).
+            if (this.user.role === "group_leader") {
+              items.push({ group: "Leadership", key: "assign", icon: "\uFF0B", label: "Assign Duties" });
+            }
           }
+          // Command Centre (leadership.html) removed \u2014 Team, Assign Duties,
+          // Areas & Placements and Ministry Stats in this app already cover
+          // everything it did, with live data. The link no longer appears for
+          // any role.
           items.push({ group: "Account", key: "profile", icon: "\u25C9", label: "My Profile" });
           return items;
         },
@@ -5162,9 +5170,10 @@
               <label class="field-label" for="evDuty">Duty</label>
               <div class="select-wrap">
                 <select id="evDuty" class="field-input">
-                  ${opts.map((o) => `<option value="${o.title}" data-area="${o.area}">${o.area} \u00B7 ${o.title}</option>`).join("")}
+                  ${opts.map((o) => `<option value="${o.title}" data-area="${o.area}" data-desc="${(o.description || "").replace(/"/g, "&quot;")}">${o.area} \u00B7 ${o.title}</option>`).join("")}
                 </select>
               </div>
+              <p class="field-note" id="evDutyDesc" style="margin-top:6px;"></p>
             </div>
             <div class="field">
               <label class="field-label" for="evTime">Arrival time</label>
@@ -5172,7 +5181,7 @@
             </div>
             <div class="field">
               <label class="field-label" for="evNote">Message (optional)</label>
-              <textarea id="evNote" class="field-input" placeholder="Anything they should know"></textarea>
+              <textarea id="evNote" class="field-input" placeholder="Filled in from the duty description"></textarea>
             </div>
             <div style="display:flex;gap:9px;margin-top:8px;">
               <button type="button" class="aca-btn ghost" id="evCancel">Cancel</button>
@@ -5180,6 +5189,22 @@
             </div>
           </form>`;
           this.modal(true);
+
+          const evSel = document.getElementById("evDuty");
+          const evDescEl = document.getElementById("evDutyDesc");
+          const evNoteEl = document.getElementById("evNote");
+          const syncEvDesc = () => {
+            const opt = evSel.options[evSel.selectedIndex];
+            const desc = opt ? opt.dataset.desc || "" : "";
+            evDescEl.textContent = desc;
+            if (!evNoteEl.dataset.userEdited) evNoteEl.value = desc;
+          };
+          syncEvDesc();
+          evSel.onchange = syncEvDesc;
+          evNoteEl.addEventListener("input", () => {
+            evNoteEl.dataset.userEdited = "1";
+          });
+
           document.getElementById("evCancel").onclick = () => this.modal(false);
           document.getElementById("evForm").onsubmit = async (e) => {
             e.preventDefault();
@@ -5243,6 +5268,15 @@
             (m) => m.role === "trainee" && !pl.data[m.id],
           );
 
+          // Assigning an area leader's own coverage (which area, which teams)
+          // is a service-leader action — area leaders don't self-select this
+          // at signup any more, since for hostesses the area name literally is
+          // "Inside"/"Outside", and that call belongs to the service leader.
+          const canAssignAreaLeaders = this.roleLevel() >= 5;
+          const areaLeaders = canAssignAreaLeaders
+            ? view.members.filter((m) => m.role === "area_leader")
+            : [];
+
           appContent.innerHTML = `
           <div class="scope-head">
             <div>
@@ -5252,6 +5286,35 @@
             </div>
           </div>
           ${ga.source !== "live" ? `<div class="data-note">Not syncing \u2014 run <b>supabase-v16.sql</b> to create the area tables.</div>` : ""}
+
+          ${
+            canAssignAreaLeaders
+              ? `<div class="aca-section-label">Area leaders \u2014 who covers what (${areaLeaders.length})</div>
+                 <p class="field-note" style="margin:-6px 0 12px;">
+                   Area leaders no longer choose this at sign-up \u2014 assign each
+                   one their area and the teams they oversee.
+                 </p>
+                 ${
+                   areaLeaders.length
+                     ? areaLeaders
+                         .map(
+                           (al) => `
+                     <div class="roster-row">
+                       <div class="roster-av">${this.initials(al)}</div>
+                       <div class="roster-body">
+                         <h4>${al.name} ${al.surname}</h4>
+                         <p>${al.areaName ? al.areaName : "No area assigned yet"}${(al.areaTeams || []).length ? " \u00B7 " + al.areaTeams.length + " team" + (al.areaTeams.length === 1 ? "" : "s") : ""}</p>
+                       </div>
+                       <div class="roster-right">
+                         <button class="mini-btn ${al.areaName ? "" : "accent"}" data-assign-area-leader="${al.id}">${al.areaName ? "Change" : "Assign"}</button>
+                       </div>
+                     </div>`,
+                         )
+                         .join("")
+                     : `<p class="field-note">No area leaders in your scope yet.</p>`
+                 }`
+              : ""
+          }
 
           <div class="aca-section-label">Group \u2192 Area</div>
           <p class="field-note" style="margin:-6px 0 12px;">
@@ -5335,6 +5398,87 @@
           appContent.querySelectorAll("[data-place]").forEach((b) => {
             b.onclick = () => this.openPlacement(b.dataset.place, view, groups);
           });
+          appContent.querySelectorAll("[data-assign-area-leader]").forEach((b) => {
+            b.onclick = () =>
+              this.openAssignAreaLeader(b.dataset.assignAreaLeader, areaLeaders, areaList, groups);
+          });
+        },
+
+        // Service-leader-only: set an area leader's covering area and the
+        // specific teams they oversee. Writes straight to user_info \u2014 no
+        // new table needed, since area_name and area_teams already exist
+        // there from earlier migrations, just previously self-selected at
+        // sign-up instead of assigned here.
+        openAssignAreaLeader(userId, areaLeaders, areaList, groups) {
+          const al = areaLeaders.find((x) => String(x.id) === String(userId));
+          if (!al) return;
+          const chosenTeams = new Set(al.areaTeams || []);
+
+          modalTitle.textContent = `Assign ${al.name} ${al.surname}`;
+          modalBody.innerHTML = `
+          <div id="alMsg" class="form-msg err"></div>
+          <form id="alForm">
+            <div class="field">
+              <label class="field-label" for="alArea">Area</label>
+              <div class="select-wrap">
+                <select id="alArea" class="field-input">
+                  <option value="">No area</option>
+                  ${areaList.map((a) => `<option value="${a}" ${al.areaName === a ? "selected" : ""}>${a}</option>`).join("")}
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Teams they oversee</label>
+              <div class="teams-picker" id="alTeamsPicker">
+                ${groups
+                  .map(
+                    (g) =>
+                      `<button type="button" class="team-chip ${chosenTeams.has(g.id) ? "on" : ""}" data-al-team="${g.id}">${g.name}</button>`,
+                  )
+                  .join("")}
+              </div>
+            </div>
+            <div style="display:flex; gap:9px; margin-top:8px;">
+              <button type="button" class="aca-btn ghost" id="alCancel">Cancel</button>
+              <button type="submit" class="aca-btn primary">Save</button>
+            </div>
+          </form>`;
+          this.modal(true);
+
+          appContent; // no-op to keep linter quiet about scope; picker below owns its own state
+          const picked = new Set(chosenTeams);
+          document.getElementById("alTeamsPicker").querySelectorAll("[data-al-team]").forEach((chip) => {
+            chip.onclick = () => {
+              const id = chip.dataset.alTeam;
+              if (picked.has(id)) picked.delete(id);
+              else picked.add(id);
+              chip.classList.toggle("on");
+            };
+          });
+
+          document.getElementById("alCancel").onclick = () => this.modal(false);
+          document.getElementById("alForm").onsubmit = async (e) => {
+            e.preventDefault();
+            if (!window.supabaseClient) {
+              const msg = document.getElementById("alMsg");
+              msg.className = "form-msg err show";
+              msg.textContent = "You're offline \u2014 can't save this right now.";
+              return;
+            }
+            const areaName = document.getElementById("alArea").value || null;
+            const { error } = await window.supabaseClient
+              .from("user_info")
+              .update({ area_name: areaName, area_teams: [...picked] })
+              .eq("user_id", al.id);
+            if (error) {
+              const msg = document.getElementById("alMsg");
+              msg.className = "form-msg err show";
+              msg.textContent = "Couldn't save: " + error.message;
+              return;
+            }
+            this.modal(false);
+            await this.areas();
+          };
         },
 
         openPlacement(userId, view, groups) {
@@ -5728,7 +5872,7 @@
                 </div>
                 <div class="roster-right">
                   <span class="sv-badge ${b.cls}">${b.text}</span>
-                  ${this.roleLevel() >= 3 ? `<button class="mini-btn" data-assign-user="${m.id}">Assign</button>` : ""}
+                  ${this.user.role === "group_leader" ? `<button class="mini-btn" data-assign-user="${m.id}">Assign</button>` : ""}
                 </div>
               </div>`;
                   })
@@ -5767,6 +5911,11 @@
         },
 
         async assign() {
+          // Assigning duties belongs to the group leader specifically.
+          // Nav no longer offers this to anyone else, but the route itself
+          // must refuse too — a hash typed directly, or an old bookmark,
+          // shouldn't bypass the restriction.
+          if (this.user.role !== "group_leader") return this.go("dashboard");
           this.setTitle("Assign Duties", "Leadership");
           appContent.innerHTML = this.skeleton(3);
 
@@ -5856,6 +6005,9 @@
         },
 
         async openAssign(userId) {
+          // Same restriction as the assign() route — belt and braces, since
+          // this can also be opened directly from the Team roster.
+          if (this.user.role !== "group_leader") return;
           const view = this._team || (await window.MOHData.teamOverview(this.user));
           const m = view.members.find((u) => String(u.id) === String(userId));
           if (!m) {
@@ -5886,9 +6038,10 @@
               <label class="field-label" for="duty">Duty</label>
               <div class="select-wrap">
                 <select id="duty" class="field-input">
-                  ${opts.map((o) => `<option value="${o.title}" data-area="${o.area}">${o.area} \u00B7 ${o.title}</option>`).join("")}
+                  ${opts.map((o) => `<option value="${o.title}" data-area="${o.area}" data-desc="${(o.description || "").replace(/"/g, "&quot;")}">${o.area} \u00B7 ${o.title}</option>`).join("")}
                 </select>
               </div>
+              <p class="field-note" id="dutyDesc" style="margin-top:6px;"></p>
             </div>
             <div class="field">
               <label class="field-label" for="arrival">Arrival time</label>
@@ -5903,7 +6056,8 @@
             <div class="field">
               <label class="field-label" for="dutyNote">Message to them (optional)</label>
               <textarea id="dutyNote" class="field-input"
-                placeholder="e.g. please take the far gate first, then help with cones"></textarea>
+                placeholder="Filled in from the duty description \u2014 edit or add to it"></textarea>
+              <p class="field-note">Pre-filled from what this duty involves. Add anything specific for them, or leave as is.</p>
             </div>
             <div style="display:flex; gap:9px; margin-top:8px;">
               <button type="button" class="aca-btn ghost" id="asCancel">Cancel</button>
@@ -5911,6 +6065,23 @@
             </div>
           </form>`;
           this.modal(true);
+
+          // Show the real duty description and pre-fill the message with it.
+          // The leader can edit or clear it before saving.
+          const dutySelEl = document.getElementById("duty");
+          const descEl = document.getElementById("dutyDesc");
+          const noteEl = document.getElementById("dutyNote");
+          const syncDutyDesc = () => {
+            const opt = dutySelEl.options[dutySelEl.selectedIndex];
+            const desc = opt ? opt.dataset.desc || "" : "";
+            descEl.textContent = desc;
+            if (!noteEl.dataset.userEdited) noteEl.value = desc;
+          };
+          syncDutyDesc();
+          dutySelEl.onchange = syncDutyDesc;
+          noteEl.addEventListener("input", () => {
+            noteEl.dataset.userEdited = "1";
+          });
 
           document.getElementById("asCancel").onclick = () => this.modal(false);
 

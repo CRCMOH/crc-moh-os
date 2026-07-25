@@ -638,3 +638,49 @@ project-wide.
 Before adding CSS for an existing, named component, grep every stylesheet for
 that class first. This round cost a full extra pass because that step was
 skipped once.
+
+# v22 — duty content, role permissions, Command Centre retired
+
+## 66. Duties now have real descriptions, not generic filler
+Every duty's description was auto-generated as `"<title> in <area>"` — e.g.
+"Altar Control in Alpha" \u2014 which just restated the title back. Replaced with
+110 individually written descriptions (grounded in the Usher and Hostess
+guides) explaining what the duty actually involves.
+
+The Assign Duty modal now shows the real description under the dropdown and
+pre-fills the message field with it, so a group leader doesn't have to write
+instructions from scratch \u2014 they can send it as-is or add to it. If they've
+already started typing, picking a different duty won't overwrite what they
+wrote. Same treatment applied to the event-assignment modal from Poll Results.
+
+## 67. Assign Duties restricted to group leaders only
+Previously any leader (level 3+) could reach it via nav, and the route itself
+had **no role check at all** \u2014 only the nav item's visibility was gating it,
+so a direct hash (`#assign`) bypassed the restriction entirely for anyone.
+
+Fixed at three points: the nav item only renders for `role === "group_leader"`;
+the `assign()` route itself now refuses anyone else; and the Assign button on
+the Team roster only appears for group leaders too, with `openAssign()` itself
+guarded as well. Verified: service leader forced to `#assign` directly lands
+back on their dashboard, and only sees 0 assign buttons on Team; group leader
+sees 2.
+
+## 68. Command Centre (leadership.html) removed for everyone
+No longer appears in navigation for any role, in either the main app or
+`dashboard-extended.html`. Direct navigation to `leadership.html` now
+redirects straight to the dashboard rather than showing a dead page. Removed
+from the service worker's precache list. Team, Assign Duties, Areas &
+Placements and Ministry Stats already cover what it did, with live data.
+
+## 69. Area leaders no longer choose their own coverage at signup
+For hostesses, area names are literally "Inside Group 1/2/3" and "Outside
+Group 1/2/3" \u2014 so picking an area at sign-up **was** self-selecting inside
+vs outside. That decision now belongs to the service leader.
+
+Area leader sign-up dropped to just division + service, same as any other
+leader. A new **"Area leaders \u2014 who covers what"** section appears on the
+Areas & Placements page, visible only to service leaders and above (level 5+),
+where each area leader in scope can be assigned their area and the specific
+teams they oversee \u2014 written directly to the existing `user_info.area_name`
+/ `area_teams` columns, so no new migration was needed. Verified: service
+leader sees the section, an area leader viewing the same page does not.
