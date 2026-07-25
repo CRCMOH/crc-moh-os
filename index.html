@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover"
+      content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"
     />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
@@ -1575,41 +1575,16 @@
 
       // 3. Create ONE client and reuse it everywhere. We attach it to `window`
       //    so any other script on the page (or the console) can use it too.
-      const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: {
+          persistSession: true, // keep the session in localStorage across visits
+          autoRefreshToken: true, // silently refresh before the token expires
+          detectSessionInUrl: false,
+        },
+      });
       window.supabaseClient = supabaseClient;
+      window.dispatchEvent(new Event("supabase-ready"));
 
-      // 4. Hide the badge automatically after 5 seconds (fades out, then removed).
-      function hideBadgeAfterDelay() {
-        const badge = document.getElementById("supabaseTestBadge");
-        setTimeout(() => {
-          badge.style.opacity = "0";
-          setTimeout(() => badge.remove(), 500); // wait for fade to finish, then remove
-        }, 5000);
-      }
-
-      // 5. Test query: read the "surname" column from the "user_info" table.
-      async function testConnection() {
-        const badge = document.getElementById("supabaseTestBadge");
-        const { data, error } = await supabaseClient
-          .from("user_info")
-          .select("surname")
-          .limit(5);
-
-        if (error) {
-          console.error("Supabase test query failed:", error);
-          badge.style.background = "#7a1f1f";
-          badge.innerText = "Supabase error: " + error.message;
-          hideBadgeAfterDelay();
-          return;
-        }
-
-        console.log("Supabase test query result (user_info.surname):", data);
-        badge.style.background = "#1f7a3f";
-        badge.innerText = "Supabase connected ✔ (" + data.length + " rows)";
-        hideBadgeAfterDelay();
-      }
-
-      testConnection();
     </script>
     <!-- Supabase connection end -->
 
@@ -1761,8 +1736,29 @@
           ].forEach((key) => localStorage.removeItem(key));
         },
 
+        async waitForSupabase(timeoutMs = 4000) {
+          if (window.supabaseClient) return true;
+          return new Promise((resolve) => {
+            const onReady = () => {
+              clearTimeout(timer);
+              resolve(true);
+            };
+            const timer = setTimeout(() => {
+              window.removeEventListener("supabase-ready", onReady);
+              resolve(!!window.supabaseClient);
+            }, timeoutMs);
+            window.addEventListener("supabase-ready", onReady, { once: true });
+          });
+        },
+
         async checkActiveSession() {
-          if (!window.supabaseClient) {
+          // The Supabase client loads from a CDN as an ES module import. On a
+          // slow connection it can still be resolving when this runs, and
+          // bailing straight to the landing screen here is what made sessions
+          // look like they weren't persisting — the client existed, but not
+          // yet at the exact moment this check ran. Wait for it instead.
+          const ready = await this.waitForSupabase();
+          if (!ready || !window.supabaseClient) {
             this.showScreen("landingScreen");
             return;
           }
@@ -2253,42 +2249,6 @@
           DashGuide.init(payload);
         },
       };
-
-
-      const VAPID_PUBLIC_KEY = "BN4GvZtE...";   // your public key from step 1
-
-function urlBase64ToUint8Array(base64String) {
-  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
-  const raw = atob(base64);
-  return Uint8Array.from([...raw].map((c) => c.charCodeAt(0)));
-}
-
-async function registerPush(user) {
-  if (!("serviceWorker" in navigator) || !("PushManager" in window)) return false;
-  if (Notification.permission !== "granted") {
-    if ((await Notification.requestPermission()) !== "granted") return false;
-  }
-
-  const reg = await navigator.serviceWorker.ready;
-  let sub = await reg.pushManager.getSubscription();
-  if (!sub) {
-    sub = await reg.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
-    });
-  }
-
-  const raw = sub.toJSON();
-  await window.supabaseClient.from("push_subscription").upsert({
-    endpoint: sub.endpoint,
-    user_id: user.id,
-    p256dh: raw.keys.p256dh,
-    auth: raw.keys.auth,
-    user_agent: navigator.userAgent.slice(0, 200),
-  });
-  return true;
-}
 
       // ================= CONTROLLER: DASHBOARD & ACADEMY & GUIDE SYSTEMS =================
       const DashGuide = {

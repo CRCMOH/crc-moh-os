@@ -534,3 +534,49 @@ understands it. Setting an event date on a poll is what enables this.
 Verified: 3 replies of 4 asked, tally 2/1/0, split AM (1) and PM (2), filtering
 to "Yes I can serve" narrows to Thabo (AM) and Naledi (PM), and assigning opens
 "Duty for Wednesday, 05 August" with all 50 duties available.
+
+# v20 — mobile feel: viewport, landing fill, session persistence
+
+## 59. Page zoomed on input focus
+`maximum-scale` was missing from the viewport meta, layered on top of the
+16px input font-size fix from v11. Added `maximum-scale=1` — pinch-to-zoom
+elsewhere on the page is left alone (blocking it entirely fails accessibility
+guidelines), this only stops the browser auto-zooming when a field is tapped.
+
+## 60. Landing collage stopped partway down the screen
+`.landing-collage`, its four `.collage-img` children, `.landing-top-brand` and
+`.landing-center` had **no CSS anywhere in the project** — only the outer
+`.land-wrap` was styled. Unstyled images render at their natural size and
+stack in normal document flow, which is exactly the "ends in the middle"
+symptom: the collage was never told to cover anything, so it only took up as
+much height as the raw images needed before the text content below pushed in.
+
+Now a fixed full-bleed grid behind everything (`position:absolute; inset:0`),
+four images as 2\u00d72 quadrants with `object-fit:cover`, a single readability
+scrim over the top, and the logo/chant/copy layered above it. Verified in
+Chromium: collage height equals viewport height exactly, at every size.
+
+## 61. Sessions didn't persist — the actual cause
+`window.supabaseClient` is set inside a `<script type="module">` that imports
+the Supabase library from a CDN. `checkActiveSession()` ran on
+`DOMContentLoaded` and bailed straight to the landing screen the instant
+`window.supabaseClient` was `undefined` \u2014 no wait, no retry. On a slower
+mobile connection the CDN import can still be resolving at that exact moment,
+so a real, valid session would be silently ignored and the person dumped back
+to the sign-in screen despite having a working login.
+
+Added `waitForSupabase()`, which listens for a `supabase-ready` event the
+module now fires the instant the client exists, with a 4-second ceiling so it
+can never hang if the CDN is genuinely unreachable. `createClient()` also now
+explicitly sets `persistSession: true` and `autoRefreshToken: true` \u2014 these
+were already Supabase's defaults, so behaviour is unchanged, but they're
+spelled out so a future Supabase version can't silently alter them under us.
+
+Verified directly: client arriving 900ms late is now found and used (900ms
+wait, not an immediate bail); a client that never arrives still gives up
+cleanly at the 4s ceiling rather than hanging forever.
+
+## 62. Removed the leftover debug badge
+A `testConnection()` query and its on-screen badge from an early debugging
+pass were still running on every single page load. Deleted \u2014 no behaviour
+change, just one fewer query and one fewer console log per visit.
