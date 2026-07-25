@@ -580,3 +580,61 @@ cleanly at the 4s ceiling rather than hanging forever.
 A `testConnection()` query and its on-screen badge from an early debugging
 pass were still running on every single page load. Deleted \u2014 no behaviour
 change, just one fewer query and one fewer console log per visit.
+
+# v21 — landing screen fixed properly, not patched over
+
+A real device screenshot showed the collage image cutting off mid-screen and
+the "Who are we? Red Army!" tagline overlapping "Welcome to MOH OS". Both
+traced back to the same root problem.
+
+## 63. Three generations of landing CSS were stacked, uncoordinated
+`theme-overrides.css` turned out to already contain a complete design for this
+screen — written across three separate passes over time, each adding more
+`!important` on top of the last, all still present simultaneously. On top of
+that, my own v20 fix added a **fourth**, non-`!important` layer that assumed
+no earlier styling existed. It didn't check first, and it should have.
+
+Diagnosed by measuring actual computed boxes in real Chromium rather than
+reading the cascade by eye: `.chant-orbit` computed to a literal 0\u00d70 box
+(hidden by a `display:none!important` mobile kill-switch elsewhere), while
+`.mobile-chant-lines` \u2014 `position:absolute` with no anchor offsets, from my
+v20 rules, unopposed by anything more specific \u2014 was positioned against a
+huge, mostly-invisible 484px box, landing it squarely inside the headline
+below. That was the overlap.
+
+**Fix:** removed the entire v20 landing block from `app-ui.css`. The existing,
+mostly-correct design in `theme-overrides.css` / `responsive-app.css` didn't
+need replacing \u2014 it needed one real bug fixed inside it (next item), and my
+job was to get out of its way.
+
+## 64. The actual "image ends in the middle" bug
+One line, in `responsive-app.css`'s mobile block:
+`.landing-collage .collage-img:first-child` was set to
+`height:56dvh; object-fit:contain`. Against a landscape photo in a portrait
+box, `contain` shrinks the image to fit the *width*, leaving empty space
+below it inside that 56dvh box, then a hard cut to the solid background
+colour where the box itself ends. That is exactly the reported symptom.
+
+Changed to `inset:0; object-fit:cover` \u2014 a true full-bleed hero that fills
+the entire screen behind the content by cropping rather than letterboxing.
+Retuned the darkening scrim to fade gradually over the whole height instead
+of a sudden jump partway down, so text stays legible without an abrupt seam
+where a shorter image used to end.
+
+Verified across iPhone SE (375\u00d7667), iPhone 13 (390\u00d7844) and iPhone Max
+(428\u00d7926) in real Chromium: image height equals viewport height exactly at
+every size, chant lines no longer overlap the headline, and total page height
+matches viewport height \u2014 no scroll, no dead gap, no cutoff.
+
+## 65. Tap-highlight suppressed globally, not per-element
+Only about 9 specific buttons had `-webkit-tap-highlight-color:transparent`.
+Everything else still flashed the browser's default grey/blue highlight on
+tap \u2014 arguably the single biggest "this is a website" tell on Android. One
+rule now covers every button, link and `[role="button"]`, plus
+`touch-action:manipulation` to remove the ~300ms double-tap-to-zoom delay
+project-wide.
+
+## Lesson for next time
+Before adding CSS for an existing, named component, grep every stylesheet for
+that class first. This round cost a full extra pass because that step was
+skipped once.

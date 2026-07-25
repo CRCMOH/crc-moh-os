@@ -7,7 +7,7 @@
    - Strategy split: network-first for app code so updates land immediately,
      cache-first for images/fonts which never change.
 */
-const CACHE_NAME = 'crc-moh-os-v20';
+const CACHE_NAME = 'crc-moh-os-v21';
 
 const CORE_ASSETS = [
   './',

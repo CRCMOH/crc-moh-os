@@ -2291,175 +2291,38 @@ body.nav-open .app-main {
 }
 
 /* ============================================================================
-   16. LANDING SCREEN — full-bleed collage (v20)
-
-   .landing-collage and its four .collage-img children, plus
-   .landing-top-brand and .landing-center, had NO CSS anywhere in the
-   project — only the outer .land-wrap was styled. Unstyled <img> tags render
-   at their natural size and stack top-to-bottom in normal flow, which is
-   exactly the "ends in the middle" symptom: the collage was never asked to
-   cover anything, so it only ever took up as much height as the images
-   themselves needed before the text content below pushed in.
+   16. LANDING SCREEN — removed in v21.
+   theme-overrides.css and responsive-app.css already had a complete, working
+   design for this screen across three overlapping generations of rules. The
+   block that was here duplicated and actively conflicted with it — most
+   damagingly, position:absolute on .crc-logo-image and .mobile-chant-lines
+   with no anchor offsets, fighting the deliberate flex-column layout those
+   files already establish for mobile. See v21 changelog for the real fix,
+   which was one line in responsive-app.css, not a parallel CSS system here.
    ==========================================================================*/
 
-#landingScreen .land-wrap {
-  position: relative;
-  min-height: 100dvh;
-  padding: 0;
-  overflow: hidden;
+/* ============================================================================
+   17. APP FEEL, GLOBALLY (v21)
+   Tap-highlight suppression previously existed on ~9 specific selectors, so
+   most buttons and links across the app still flashed the browser's default
+   grey/blue highlight on tap — the single biggest "this is a website, not an
+   app" tell on Android. One rule covers everything instead of hunting each
+   element down one at a time.
+   ==========================================================================*/
+button,
+a,
+[role="button"],
+input[type="button"],
+input[type="submit"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation; /* removes the ~300ms double-tap-to-zoom delay */
 }
 
-/* Full-bleed background collage: four images tiled into quadrants that
-   together cover the entire screen, behind everything else. */
-.landing-collage {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-}
-.landing-collage .collage-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-/* A single dark scrim over the whole collage so the logo, chant text and
-   buttons stay legible regardless of what's in the photos. */
-.landing-collage::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(7, 2, 13, 0.55) 0%,
-    rgba(7, 2, 13, 0.35) 30%,
-    rgba(7, 2, 13, 0.55) 62%,
-    rgba(7, 2, 13, 0.94) 100%
-  );
-}
-
-.landing-top-brand {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: max(18px, env(safe-area-inset-top)) 20px 0;
-}
-.landing-top-brand span {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.82);
-}
-.install-chip {
-  padding: 7px 13px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 700;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  backdrop-filter: blur(6px);
-  cursor: pointer;
-}
-
-.landing-center {
-  position: relative;
-  z-index: 2;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  padding: 20px;
-  text-align: center;
-}
-.chant-orbit {
-  width: min(78vw, 320px);
-  height: min(78vw, 320px);
-  opacity: 0.85;
-}
-.chant-orbit text {
-  fill: rgba(255, 255, 255, 0.55);
-  font-size: 13px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.crc-logo-image {
-  position: absolute;
-  width: 74px;
-  height: 74px;
-  border-radius: 22px;
-  object-fit: cover;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-}
-.mobile-chant-lines {
-  position: absolute;
-  bottom: -6px;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.mobile-chant-lines span {
-  font-size: 11.5px;
-  color: rgba(255, 255, 255, 0.62);
-}
-.mobile-chant-lines strong {
-  color: #ff8da2;
-  font-weight: 800;
-}
-
-.land-bottom {
-  position: relative;
-  z-index: 2;
-  padding: 0 22px max(26px, env(safe-area-inset-bottom));
-}
-.land-tagline {
-  font-size: 10.5px;
-  font-weight: 900;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: #ff8da2;
-  margin-bottom: 8px;
-}
-.land-title {
-  font-family: var(--display);
-  font-size: 34px;
-  line-height: 1.08;
-  color: #fff;
-  margin: 0 0 10px;
-}
-.land-title span {
-  background: var(--crc-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.land-copy {
-  font-size: 13px;
-  line-height: 1.55;
-  color: rgba(255, 255, 255, 0.72);
-  margin: 0 0 20px;
-  max-width: 46ch;
-}
-.landing-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-@media (min-width: 640px) {
-  .landing-center {
-    padding-top: 40px;
-  }
-  .land-bottom {
-    max-width: 420px;
-    margin: 0 auto;
-  }
+/* Prevent the whole page from being selectable/draggable like a document —
+   already applied at html/body in responsive-app.css; this extends it to
+   anything that might sit outside that reach (e.g. content injected before
+   that stylesheet's rule was written, dialogs, etc). Inputs stay selectable. */
+#appMain, .side-nav, .modal-sheet, .app-header {
+  -webkit-user-select: none;
+  user-select: none;
 }
